@@ -17,3 +17,6 @@ fonts_dir = "source/fonts"
 
 line_comments = false
 output_style = :compressed
+
+add_import_path "vendor/bower/bourbon/dist/"
+add_import_path "vendor/bower/neat/app/assets/stylesheets/"
