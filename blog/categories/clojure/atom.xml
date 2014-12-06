@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Artigos Da Categoria: Clojure | Programação, etc]]></title>
+  <link href="http://lucasas.github.io/blog/categories/clojure/atom.xml" rel="self"/>
+  <link href="http://lucasas.github.io/"/>
+  <updated>2014-12-06T10:44:03-02:00</updated>
+  <id>http://lucasas.github.io/</id>
+  <author>
+    <name><![CDATA[Lucas Souza]]></name>
+    <email><![CDATA[lucasas@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Clojure Em 15 Minutos]]></title>
+    <link href="http://lucasas.github.io/blog/2014/12/05/clojure-em-15-minutos/"/>
+    <updated>2014-12-05T16:04:28-02:00</updated>
+    <id>http://lucasas.github.io/blog/2014/12/05/clojure-em-15-minutos</id>
+    <content type="html"><![CDATA[<p>Decidi que começaria a estudar alguma linguagem funcional este ano. O &ldquo;problema&rdquo; era escolher
+uma linguagem que tivesse mercado (afinal, já que quero aprender algo novo, vou unir o útil ao agradável e
+aprender algo que me traga retorno), que tivesse uma comunidade ativa e que não tivesse uma syntax extramamente
+bizarra. <!--more--></p>
+
+<p>Analisando todos estes fatores, decidi que Clojure seria a linguagem mais apropriada para o meu momento. Clojure
+é bastante adotada em empresas fora do Brasil e algumas empresas por aqui estão utilizando também. A <a href="http://www.meetup.com/clj-sp">comunidade no Brasil</a> está crescendo e existem <a href="https://twitter.com/p_balduino">ótimos desenvolvedores</a> apostando nela.</p>
+
+<p>Não vou entrar em detalhes como instalação e características da linguagem. Você pode ler mais sobre isso na <a href="http://clojure.org">documentação oficial da linguagem</a>, que aliás, é excelente.</p>
+
+<p>Clojure é um <a href="http://pt.wikipedia.org/wiki/Lisp">dialeto Lisp</a>, o que na minha opinião torna a linguagem muito simples de aprender, porém, muitos desenvolvedores acham que pode ser um processo lento seu aprendizado.</p>
+
+<p>Nesse primeiro post ,<a href="http://adambard.com/blog/clojure-in-15-minutes/">baseado no post &ldquo;Clojure in 15 minutes&rdquo; de Adam Bard</a> de uma série de vários outros que pretendo escrever), vou abordar o básico da linguagem.</p>
+
+<pre><code>; Comentários podem ser escritos com ponto e vírgula
+
+; Clojure é escrito usando "forms", que são listas 
+; de argmentos dentro de () separados por espaço em branco.
+;
+; O primeiro argumento sempre é uma função ou macro e 
+; o restante são argumentos que serão passados para esta função
+;
+; Por exemplo:
+(+ 1 2) ; =&gt; 3
+; 
+; + é função, os valores 1 e 2 são passados para função 
+;
+; Mais alguns exemplos:
+(+ 1 1) ; =&gt; 2
+(- 2 1) ; =&gt; 1
+(* 1 2) ; =&gt; 2
+(/ 2 1) ; =&gt; 2
+
+; str criará uma nova string contendo todos argumentos passados
+(str "Hello" " " "World") ; =&gt; "Hello World"
+
+; Testes de igualdade são sempre feitos com `=`:
+(= 1 1) ; =&gt; true
+(= 2 1) ; =&gt; false
+
+; Quando você deseja inverter o valor booleano use `not`:
+(not true) ; =&gt; false
+
+; Listas podem ser encadeadas. Clojure as executará de dentro para fora: 
+(+ 1 (- 3 2)) ; = 1 + (3 - 2) =&gt; 2
+
+; Tipos
+;;;;;;;;;;;;;
+
+; Clojure utiliza alguns tipos definidos no Java. Exemplo: booleanos, strings e números.
+; Use `class` para verificar o tipo de um determinado valor
+(class 1) ; Inteiros literais são java.lang.Long por padrão
+(class 1.); Float literais são java.lang.Double
+(class ""); Strings sempre são envoltas de aspas duplas, e são java.lang.String
+(class false) ; Booleanos são java.lang.Boolean
+(class nil); O valor "null" é nil
+
+; Collections e Sequences
+;;;;;;;;;;;;;;;;;;;
+
+; Vetores
+(class [1 2 3]) ; =&gt; clojure.lang.PersistentVector
+
+; Listas
+; Para não serem interpretadas como listas que devem ser lidas
+; como as anteriores, adicionamos `'`
+(class '(1 2 3)) ; =&gt; clojure.lang.PersistentList
+
+; Usar a função `list` também é uma opção
+(class (list 1 2 3)) ; =&gt; clojure.lang.PersistentList
+
+; Ambas estruturas são collections
+(coll? '(1 2 3)) ; =&gt; true
+(coll? [1 2 3]) ; =&gt; true
+
+; Porém, apenas listas são sequencias
+(seq? '(1 2 3)) ; =&gt; true
+(seq? [1 2 3]) ; =&gt; false
+
+; Use `cons` para adicionar um item no começo de uma lista ou vetor
+(cons 4 [1 2 3]) ; =&gt; (4 1 2 3)
+(cons 4 '(1 2 3)) ; =&gt; (4 1 2 3)
+
+; Use `conj` para adicionar um item no começo de uma lista
+; ou no fim de um vetor
+(conj [1 2 3] 4) ; =&gt; [1 2 3 4]
+(conj '(1 2 3) 4) ; =&gt; (4 1 2 3)
+
+; Use `concat` para juntar duas collections
+(concat [1 2] '(3 4)) ; =&gt; (1 2 3 4)
+
+; Use `map` para percorrer uma collection retornando outra
+; com o resultado da operação feita. Por exemplo: A função `inc`
+; utilizada com `map`, incrementará cada item da collection retornando
+; uma nova
+(map inc [1 2 3]) ; =&gt; (2 3 4)
+
+; Use `filter` para percorrer e filtrar uma collection. Por exemplo:
+(filter even? [1 2 3]) ; =&gt; (2)
+
+; Use `reduce` para executar e agrupar os resultados
+(reduce + [1 2 3 4])
+; = (+ (+ (+ 1 2) 3) 4)
+; =&gt; 10
+
+; `reduce` pode receber uma argumento com valor inicial
+(reduce + 1 [3 2 1])
+; = (+ (+ (+ 1 3) 2) 1)
+; =&gt; 7
+
+; Para criar uma lista literal de dados, use '
+'(+ 1 2) ; =&gt; (+ 1 2)
+
+; Para executá-la use `eval`
+(eval '(+ 1 2)) ; =&gt; 3
+
+
+; Funções
+;;;;;;;;;;;;;;;;;;;;;
+
+; Use `fn` para criar funções anônimas. 
+; Uma função sempre retorna seu último statement.
+(fn [] "Olá") ; =&gt; fn
+
+; Para invocá-la basta declará-la dentro de `()`
+((fn [] "Olá")) ; =&gt; "Olá"
+
+; Para guardar uma função em uma variável basta usar `def`
+(def ola (fn [] "Olá"))
+(ola) ; =&gt; "Olá"
+
+; O processo pode ser encurtado usando `defn`
+(defn ola [] "Olá")
+(ola) ; =&gt; "Olá"
+
+; `[]` representa o conjunto de parâmetros recebidos pela função
+(defn ola [nome]
+  (str "Olá " nome))
+(ola "Lucas") ; =&gt; "Olá Lucas"
+
+; É possível sobrecarregar e criar várias assinaturas uma função
+(defn ola
+  ([] "Olá desconhecido")
+  ([nome] (str "Olá " nome)))
+(ola "Lucas") ; =&gt; "Olá Lucas"
+(ola) ; =&gt; "Olá desconhecido"
+
+; Funções podem receber argumentos extras e disponibilizá-los
+; em uma seq
+(defn funcao-com-muitos-argumentos [&amp; args]
+  (str "Você passou " (count args) " argumentos: " args))
+(funcao-com-muitos-argumentos 1 2 3) ; =&gt; "Você passou 3 argumentos: (1 2 3)"
+
+; É possível receber argumentos pré-definidos e extras
+(defn funcao-com-muitos-argumentos [nome &amp; args]
+  (str "Oláá " nome ", você passou " (count args) " argumentos extra"))
+(funcao-com-muitos-argumentos "Lucas" 1 2 3)
+; =&gt; "Olá Lucas, você passou 3 argumentos extra"
+
+
+; Hashmaps
+;;;;;;;;;;
+
+(class {:a 1 :b 2 :c 3}) ; =&gt; clojure.lang.PersistentArrayMap
+
+; Keywords são como string
+(class :a) ; =&gt; clojure.lang.Keyword
+
+; Maps podem user qualquer tipo como chame, mas o mais comum é que sejam keywords
+(def stringmap (hash-map "a" 1, "b" 2, "c" 3))
+stringmap  ; =&gt; {"a" 1, "b" 2, "c" 3}
+
+(def keymap (hash-map :a 1 :b 2 :c 3))
+(keymap) ; =&gt; {:a 1, :c 3, :b 2} (Como todo HashMap, a ordem não é garantida)
+
+; A propósito, vírgulas são ignoradas e tratadas como espaços em branco
+; por isso, você pode definir um map separados os conjuntos de chave e valores
+; apenas por espaço.
+
+; Keywords podem ser utilizadas diretamente para pegar o valor de uma HashMap 
+(:b keymap) ; =&gt; 2
+
+; Não tente com String, isso não é Rails ;-)
+;("a" stringmap)
+; =&gt; Exception: java.lang.String cannot be cast to clojure.lang.IFn
+
+; Keywords que não existem no HashMap retornam sempre nil
+(:d keymap) ; =&gt; nil
+
+; Use `assoc` para adicionar novas chaves
+(assoc keymap :d 4) ; =&gt; {:a 1, :b 2, :c 3, :d 4}
+
+; Mas lembre-se que Clojure trata tudo como imutável. Sendo assim:
+keymap ; =&gt; {:a 1, :b 2, :c 3}
+
+; Use `dissoc` para remover chaves
+(dissoc keymap :a :b) ; =&gt; {:c 3}
+
+; Sets
+;;;;;;
+
+(class #{1 2 3}) ; =&gt; clojure.lang.PersistentHashSet
+(set [1 2 3 1 2 3 3 2 1 3 2 1]) ; =&gt; #{1 2 3}
+
+; Adicione um item usando `conj`
+(conj #{1 2 3} 4) ; =&gt; #{1 2 3 4}
+
+; Remova um item usando `disj`
+(disj #{1 2 3} 1) ; =&gt; #{2 3}
+
+; Teste se um item existe em um set utilizando-o como uma função
+(#{1 2 3} 1) ; =&gt; 1
+(#{1 2 3} 4) ; =&gt; nil
+
+; Outros forms
+;;;;;;;;;;;;;;;;;
+
+; Estruturas lógicas são macros no Clojure, e sua syntax
+; é igualmente simples a todo resto.
+(if false "a" "b") ; =&gt; "b"
+(if false "a") ; =&gt; nil
+
+; Use `let` para criar escopos temporários
+; Neste exemplo, as variáveis `a` e `b` valem, respectivamente, `1` e `2`
+(let [a 1 b 2]
+  (+ a b)) ; =&gt; 3
+
+E não podem ser utilizadas fora do `let`
+(let [a 1 b 2]
+  (+ a b)) ; =&gt; 3
+
+(+ a b) ; =&gt; Unable to resolve symbol: a in this context 
+
+; Grupos de statements podem ser feitos utilizando `do`:
+(do
+  (print "Olá")
+  "Mundo") ; =&gt; "Olá" (prints "Mundo")
+
+; Funções tem um `do` implícito
+(defn imprime-e-diz-ola [nome]
+  (print "Falando olá para " name)
+  (str "Olá " name))
+(imprime-e-diz-ola "Lucas") ;=&gt; "Olá Lucas" (prints "Falando olá para Lucas")
+
+; `let` também possui `do` implícito
+(let [nome "Lucas"]
+  (print "Falando olá para " name)
+  (str "Olá " name)) ;=&gt; "Olá Lucas" (prints "Falando olá para Lucas")
+</code></pre>
+
+<p>Isso é o básico para você conseguir brincar com Clojure.</p>
+]]></content>
+  </entry>
+  
+</feed>
