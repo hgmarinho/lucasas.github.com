@@ -151,7 +151,7 @@ Nesse primeiro post, [baseado no post "Clojure in 15 minutes" de Adam Bard](http
   (str "Olá " nome))
 (ola "Lucas") ; => "Olá Lucas"
 
-; É possível sobrecarregar e criar várias assinaturas uma função
+; É possível criar funções com múltiplas assinaturas
 (defn ola
   ([] "Olá desconhecido")
   ([nome] (str "Olá " nome)))
