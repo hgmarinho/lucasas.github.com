@@ -11,6 +11,10 @@ uma linguagem que tivesse mercado (afinal, já que quero aprender algo novo, vou
 aprender algo que me traga retorno), que tivesse uma comunidade ativa e que não tivesse uma syntax extramamente
 bizarra. <!--more-->
 
+<figure>
+  <img src="{{ root_url }}/images/posts/clojure-logo.png"/>
+</figure>
+
 Analisando todos estes fatores, decidi que Clojure seria a linguagem mais apropriada para o meu momento. Clojure 
 é bastante adotada em empresas fora do Brasil e algumas empresas por aqui estão utilizando também. A [comunidade no Brasil](http://www.meetup.com/clj-sp) está crescendo e existem [ótimos desenvolvedores](https://twitter.com/p_balduino) apostando nela.
 
