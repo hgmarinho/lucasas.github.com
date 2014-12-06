@@ -4,7 +4,7 @@
   <title><![CDATA[Programação, etc]]></title>
   <link href="http://lucasas.github.io/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-06T10:51:06-02:00</updated>
+  <updated>2014-12-06T10:55:37-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -26,11 +26,11 @@ bizarra. <!--more--></p>
 <p>Analisando todos estes fatores, decidi que Clojure seria a linguagem mais apropriada para o meu momento. Clojure
 é bastante adotada em empresas fora do Brasil e algumas empresas por aqui estão utilizando também. A <a href="http://www.meetup.com/clj-sp">comunidade no Brasil</a> está crescendo e existem <a href="https://twitter.com/p_balduino">ótimos desenvolvedores</a> apostando nela.</p>
 
-<p>Não vou entrar em detalhes como instalação e características da linguagem. Você pode ler mais sobre isso na <a href="http://clojure.org">documentação oficial da linguagem</a>, que aliás, é excelente.</p>
+<p>Não vou entrar em detalhes sobre instalação e características da linguagem. Você pode ler mais sobre isso na <a href="http://clojure.org">documentação oficial da linguagem</a>, que alias, é excelente.</p>
 
 <p>Clojure é um <a href="http://pt.wikipedia.org/wiki/Lisp">dialeto Lisp</a>, o que na minha opinião torna a linguagem muito simples de aprender, porém, muitos desenvolvedores acham que pode ser um processo lento seu aprendizado.</p>
 
-<p>Nesse primeiro post ,<a href="http://adambard.com/blog/clojure-in-15-minutes/">baseado no post &ldquo;Clojure in 15 minutes&rdquo; de Adam Bard</a> de uma série de vários outros que pretendo escrever), vou abordar o básico da linguagem.</p>
+<p>Nesse primeiro post, <a href="http://adambard.com/blog/clojure-in-15-minutes/">baseado no post &ldquo;Clojure in 15 minutes&rdquo; de Adam Bard</a>, de uma série de vários outros que pretendo escrever, vou abordar o básico da linguagem.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
