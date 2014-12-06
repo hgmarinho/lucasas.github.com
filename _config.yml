@@ -3,11 +3,12 @@
 # ----------------------- #
 
 url: http://lucasas.github.io
-title: Qualquer coisa de Programação
-subtitle: Programação, etc
+title: Programação, etc
+subtitle: Prog, etc
 author: Lucas Souza
 simple_search: https://www.google.com/search
 description:
+gravatar_hash: 4eceec28506545e8ed6dd49dde519d2e
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
@@ -44,7 +45,7 @@ highlighter: pygments # default python pygments have been replaced by pygments.r
 paginate: 10          # Posts per page on the blog index
 paginate_path: "posts/:num"  # Directory base for pagination URLs eg. /posts/2/
 recent_posts: 5       # Posts in the sidebar Recent Posts section
-excerpt_link: "Read on &rarr;"  # "Continue reading" link text at the bottom of excerpted articles
+excerpt_link: "Leia mais &rarr;"  # "Continue reading" link text at the bottom of excerpted articles
 excerpt_separator: "<!--more-->"
 
 titlecase: true       # Converts page and post titles to titlecase
@@ -91,8 +92,8 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
-disqus_show_comment_count: false
+disqus_short_name: programaoetc
+disqus_show_comment_count: true
 
 # Google Analytics
 google_analytics_tracking_id:
@@ -100,3 +101,9 @@ google_analytics_tracking_id:
 # Facebook Like
 facebook_user: lucasas85
 facebook_like: true
+
+category_title_prefix: "Artigos da categoria: "
+category_meta_description_prefix: "Artigos da categoria: "
+
+tag_title_prefix: "Artigos sobre: "
+tag_meta_description_prefix: "Artigos sobre: "
