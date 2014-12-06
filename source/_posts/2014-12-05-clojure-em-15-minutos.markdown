@@ -1,9 +1,9 @@
 ---
 layout: post
-title: ""Clojure em 15 minutos""
+title: "Clojure em 15 minutos"
 date: 2014-12-05 16:04:28 -0200
 comments: true
-categories: [clojure]
+categories: clojure fp
 ---
 
 Decidi que começaria a estudar alguma linguagem funcional este ano. O "problema" era escolher 
@@ -14,11 +14,11 @@ bizarra.
 Analisando todos estes fatores, decidi que Clojure seria a linguagem mais apropriada para o meu momento. Clojure 
 é bastante adotada em empresas fora do Brasil e algumas empresas por aqui estão utilizando também. A [comunidade no Brasil](http://www.meetup.com/clj-sp) está crescendo e existem [ótimos desenvolvedores](https://twitter.com/p_balduino) apostando nela.
 
-Não vou entrar em detalhes como instalação e características da linguagem. Você pode ler mais sobre isso na (documentação oficial da linguagem)[http://clojure.org], que aliás, é excelente.
+Não vou entrar em detalhes como instalação e características da linguagem. Você pode ler mais sobre isso na [documentação oficial da linguagem](http://clojure.org), que aliás, é excelente.
 
-Clojure é um (dialeto Lisp)[http://pt.wikipedia.org/wiki/Lisp], o que na minha opinião torna a linguagem muito simples de aprender, porém, muitos desenvolvedores acham que pode ser um processo lento seu aprendizado.
+Clojure é um [dialeto Lisp](http://pt.wikipedia.org/wiki/Lisp), o que na minha opinião torna a linguagem muito simples de aprender, porém, muitos desenvolvedores acham que pode ser um processo lento seu aprendizado.
 
-Nesse primeiro post ((baseado no post "Clojure in 15 minutes" de Adam Bard)[http://adambard.com/blog/clojure-in-15-minutes/]) (de uma série de vários outros que pretendo escrever), vou abordar o básico da linguagem.
+Nesse primeiro post ,[baseado no post "Clojure in 15 minutes" de Adam Bard](http://adambard.com/blog/clojure-in-15-minutes/) de uma série de vários outros que pretendo escrever), vou abordar o básico da linguagem.
 
 ```
 ; Comentários podem ser escritos com ponto e vírgula
