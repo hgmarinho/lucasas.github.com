@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Clojure | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/clojure/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-06T11:13:09-02:00</updated>
+  <updated>2014-12-06T14:34:33-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -162,7 +162,7 @@ bizarra. <!--more--></p>
   (str "Olá " nome))
 (ola "Lucas") ; =&gt; "Olá Lucas"
 
-; É possível sobrecarregar e criar várias assinaturas uma função
+; É possível criar funções com múltiplas assinaturas
 (defn ola
   ([] "Olá desconhecido")
   ([nome] (str "Olá " nome)))

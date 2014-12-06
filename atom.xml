@@ -4,7 +4,7 @@
   <title><![CDATA[Programação, etc]]></title>
   <link href="http://lucasas.github.io/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-06T11:13:09-02:00</updated>
+  <updated>2014-12-06T14:34:33-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -397,7 +397,7 @@ bizarra. <!--more--></p>
 </span><span class='line'>  (str "Olá " nome))
 </span><span class='line'>(ola "Lucas") ; =&gt; "Olá Lucas"
 </span><span class='line'>
-</span><span class='line'>; É possível sobrecarregar e criar várias assinaturas uma função
+</span><span class='line'>; É possível criar funções com múltiplas assinaturas
 </span><span class='line'>(defn ola
 </span><span class='line'>  ([] "Olá desconhecido")
 </span><span class='line'>  ([nome] (str "Olá " nome)))
