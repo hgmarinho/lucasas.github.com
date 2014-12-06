@@ -39,7 +39,7 @@
   &.internal-page
     background: rgba(0, 0, 0, .5)
     height: 85px
-  h1
+  .h1
     position: fixed
     top: 0
     left: 0
@@ -49,9 +49,10 @@
     a
       @extend %logo
       text-decoration: none
-  h2
+  .title
     @extend %description
     +fill-parent
     margin-top: 103px
+    font-weight: normal
     +breakpoints("mobile")
       margin-top: 80px

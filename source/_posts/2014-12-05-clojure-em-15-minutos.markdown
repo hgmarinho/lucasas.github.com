@@ -9,7 +9,7 @@ categories: clojure fp
 Decidi que começaria a estudar alguma linguagem funcional este ano. O "problema" era escolher 
 uma linguagem que tivesse mercado (afinal, já que quero aprender algo novo, vou unir o útil ao agradável e
 aprender algo que me traga retorno), que tivesse uma comunidade ativa e que não tivesse uma syntax extramamente
-bizarra.
+bizarra. <!--more-->
 
 Analisando todos estes fatores, decidi que Clojure seria a linguagem mais apropriada para o meu momento. Clojure 
 é bastante adotada em empresas fora do Brasil e algumas empresas por aqui estão utilizando também. A [comunidade no Brasil](http://www.meetup.com/clj-sp) está crescendo e existem [ótimos desenvolvedores](https://twitter.com/p_balduino) apostando nela.
@@ -257,4 +257,4 @@ E não podem ser utilizadas fora do `let`
   (str "Olá " name)) ;=> "Olá Lucas" (prints "Falando olá para Lucas")
 ```
 
-Isso é obviamente o básico para você conseguir brincar com Clojure.
+Isso é o básico para você conseguir brincar com Clojure.
