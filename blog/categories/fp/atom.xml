@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Fp | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/fp/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-06T10:55:37-02:00</updated>
+  <updated>2014-12-06T11:13:09-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -22,6 +22,10 @@
 uma linguagem que tivesse mercado (afinal, já que quero aprender algo novo, vou unir o útil ao agradável e
 aprender algo que me traga retorno), que tivesse uma comunidade ativa e que não tivesse uma syntax extramamente
 bizarra. <!--more--></p>
+
+<p><figure>
+  <img src="/images/posts/clojure-logo.png"/>
+</figure></p>
 
 <p>Analisando todos estes fatores, decidi que Clojure seria a linguagem mais apropriada para o meu momento. Clojure
 é bastante adotada em empresas fora do Brasil e algumas empresas por aqui estão utilizando também. A <a href="http://www.meetup.com/clj-sp">comunidade no Brasil</a> está crescendo e existem <a href="https://twitter.com/p_balduino">ótimos desenvolvedores</a> apostando nela.</p>
