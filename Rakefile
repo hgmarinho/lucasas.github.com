@@ -402,3 +402,22 @@ task :list do
   puts "Tasks: #{(Rake::Task.tasks - [Rake::Task[:list]]).join(', ')}"
   puts "(type rake -T for more detail)\n\n"
 end
+
+desc "update theme"
+task :update_theme do
+  puts "Atualizando tema :)"
+  cd ".themes/emd-theme" do
+    system "git pull --rebase"
+  end
+
+  Rake::Task["update_source"].invoke('emd-theme')
+  Rake::Task["update_style"].invoke('emd-theme')
+
+  puts "removed existing sass.old directory"
+  rm_r "sass.old", :secure=>true
+
+  puts "removed existing source.old directory"
+  rm_r "source.old", :secure=>true
+
+  puts "Done!"
+end
