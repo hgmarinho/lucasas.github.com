@@ -4,7 +4,7 @@
   <title><![CDATA[Programação, etc]]></title>
   <link href="http://lucasas.github.io/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-06T14:34:33-02:00</updated>
+  <updated>2014-12-08T18:35:48-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -12,6 +12,102 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Clojure E Recursão]]></title>
+    <link href="http://lucasas.github.io/blog/2014/12/08/clojure-e-recursao/"/>
+    <updated>2014-12-08T17:16:46-02:00</updated>
+    <id>http://lucasas.github.io/blog/2014/12/08/clojure-e-recursao</id>
+    <content type="html"><![CDATA[<p>Vamos ver um pouco sobre recursão e como resolver problemas de <em>tail recursion</em> utilizando Clojure. <!--more--></p>
+
+<figure>
+  <img src="http://lucasas.github.io/images/posts/recursion.jpg"/>
+</figure>
+
+
+<p>Você provavelmente já deve ter se deperado com algum código Javascript como o abaixo:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var numbers = [1, 5, 6, 8, 10, 3, 45];
+</span><span class='line'>var total = 0;
+</span><span class='line'>
+</span><span class='line'>for(var i=0; i &lt; numbers.length; i++) {
+</span><span class='line'>  total += numbers[i];
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Tanto a variável <code>i</code> quanto a variável <code>total</code> são mutáveis, o que sabemos ser perigoso quando utilizamos paralelismo. Clojure não permite valores mutáveis, portanto, este tipo de problema não nos afeta. Em Clojure resolvemos estes problemas utilizando recursão, o jeito funcional de iterar uma coleção e construir um resultado.</p>
+
+<p>Vamos criar uma função chamada <code>soma</code>, que obviamente, soma todos os valores de uma coleção. O código a seguir usa recursão para resolver o problema:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(defn soma
+</span><span class='line'>  ([valores acumulador]
+</span><span class='line'>     (if (empty? valores)
+</span><span class='line'>       acumulador
+</span><span class='line'>       (soma (rest valores) (+ (first valores) acumulador)))))</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção <code>valores</code> é <code>empty?</code>. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor <code>acumulador</code>.</p>
+
+<p>Mas se a condição não for verdadeira, isso significa que precisamos processar o restante da coleção (<code>tail</code>), então recursivamente chamamos a mesma funcao <code>soma</code> apenas com o <code>tail</code>, o <code>acumulador</code> passado é a soma do primeiro (<code>first</code>) elemento da coleção. Executamos a função recursivamente até que <code>valores</code> seja <code>empty?</code>.</p>
+
+<p>Cada chamada da função <code>soma</code> criará um novo escopo, onde <code>valores</code> e <code>acumulador</code> são bindados em outros valores, tudo sem mutações.</p>
+
+<p>A chamada para a função <code>soma</code> fará o trabalho esperado:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(soma [1 2 5] 0) ; =&gt; 8</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A função <code>soma</code> chamada com poucos elementos não apresenta problemas de performance:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(time (soma [1 2 5] 0)) ; =&gt; "Elapsed time: 0.047669 msecs"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Porém, se chamarmos com um número grande de elementos:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(soma (range 10000) 0) ; =&gt; StackOverflowError   clojure.lang.ChunkedCons.more</span></code></pre></td></tr></table></div></figure>
+
+
+<p>O código acima causa <code>10001</code> chamada a função <code>soma</code>. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. A milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória.</p>
+
+<p>Mas o que a milionésima primeira chamada fará com o resultado da milionésima? Absolutamente nada. A chamada recursiva é a última coisa feita, por isso o resultado é apenas passado de volta para o <em>caller</em>, que passa o resultado para outro <em>caller</em> até que chegue no <em>caller</em> original. Esse <em>pattern</em> é conhecido como <em>tail-recursion</em>.</p>
+
+<p>Alguns compiladores são espertos o suficiente para perceber que existe uma <em>tail recursion</em> e reescrevem a função utilizando um <code>loop</code> internamente. Mas, por limitações da JVM, Clojure não faz isso automaticamente. É necessário dizer ao compilador que você tem uma <em>tail recursion</em>. Em Clojure basta usar a função <code>recur</code>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(defn soma
+</span><span class='line'>  ([valores acumulador]
+</span><span class='line'>     (if (empty? valores)
+</span><span class='line'>       acumulador
+</span><span class='line'>       (recur (rest valores) (+ (first valores) acumulador))))) ; substituímos a função `soma` por `recur`</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Com apenas uma mudanças ganhamos uma grande melhoria de performance:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(soma (range 1000) 0) ; =&gt; "Elapsed time: 0.219801 msecs"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Rodando a função <code>soma</code> antiga (com mil elementos na coleção), o tempo foi em média 4 vezes maior que a função que utiliza <code>recur</code>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Clojure Em 15 Minutos]]></title>
