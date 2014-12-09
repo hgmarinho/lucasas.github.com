@@ -59,7 +59,7 @@ Porém, se chamarmos com um número grande de elementos:
 (soma (range 10000) 0) ; => StackOverflowError   clojure.lang.ChunkedCons.more
 ```
 
-O código acima causa `10001` chamada a função `soma`. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. A milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória. 
+O código acima causa `10001` chamadas a função `soma`. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. Por fim, a milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória. 
 
 Mas o que a milionésima primeira chamada fará com o resultado da milionésima? Absolutamente nada. A chamada recursiva é a última coisa feita, por isso o resultado é apenas passado de volta para o *caller*, que passa o resultado para outro *caller* até que chegue no *caller* original. Esse *pattern* é conhecido como *tail-recursion*.
 
@@ -71,7 +71,8 @@ Alguns compiladores são espertos o suficiente para perceber que existe uma *tai
   ([valores acumulador]
      (if (empty? valores)
        acumulador
-       (recur (rest valores) (+ (first valores) acumulador))))) ; substituímos a função `soma` por `recur`
+       (recur (rest valores) (+ (first valores) acumulador)))))
+        ; substituímos a função `soma` por `recur`
 ```
 
 Com apenas uma mudanças ganhamos uma grande melhoria de performance:
