@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Clojure | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/clojure/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-09T09:51:56-02:00</updated>
+  <updated>2014-12-09T09:54:20-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -85,7 +85,12 @@ for(var i=0; i &lt; numbers.length; i++) {
 <pre><code>(soma (range 1000) 0) ; =&gt; "Elapsed time: 0.219801 msecs"
 </code></pre>
 
-<p>Rodando a função <code>soma</code> antiga (com mil elementos na coleção), o tempo foi em média 4 vezes maior que a função que utiliza <code>recur</code>.</p>
+<p>Rodando o mesmo teste, mas utilizando a função soma antiga, é possível perceber quanto tempo ganhamos com esta mudança:</p>
+
+<pre><code>(soma (range 1000) 0) ; =&gt; "Elapsed time: 0.784321 msecs"
+</code></pre>
+
+<p>O tempo foi quase 4 vezes maior que a função que utiliza <code>recur</code>.</p>
 ]]></content>
   </entry>
   
