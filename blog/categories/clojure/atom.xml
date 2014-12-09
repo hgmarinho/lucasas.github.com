@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Clojure | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/clojure/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-08T18:35:48-02:00</updated>
+  <updated>2014-12-09T08:53:11-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -66,7 +66,7 @@ for(var i=0; i &lt; numbers.length; i++) {
 <pre><code>(soma (range 10000) 0) ; =&gt; StackOverflowError   clojure.lang.ChunkedCons.more
 </code></pre>
 
-<p>O código acima causa <code>10001</code> chamada a função <code>soma</code>. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. A milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória.</p>
+<p>O código acima causa <code>10001</code> chamadas a função <code>soma</code>. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. Por fim, a milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória.</p>
 
 <p>Mas o que a milionésima primeira chamada fará com o resultado da milionésima? Absolutamente nada. A chamada recursiva é a última coisa feita, por isso o resultado é apenas passado de volta para o <em>caller</em>, que passa o resultado para outro <em>caller</em> até que chegue no <em>caller</em> original. Esse <em>pattern</em> é conhecido como <em>tail-recursion</em>.</p>
 
@@ -76,7 +76,8 @@ for(var i=0; i &lt; numbers.length; i++) {
   ([valores acumulador]
      (if (empty? valores)
        acumulador
-       (recur (rest valores) (+ (first valores) acumulador))))) ; substituímos a função `soma` por `recur`
+       (recur (rest valores) (+ (first valores) acumulador)))))
+        ; substituímos a função `soma` por `recur`
 </code></pre>
 
 <p>Com apenas uma mudanças ganhamos uma grande melhoria de performance:</p>
