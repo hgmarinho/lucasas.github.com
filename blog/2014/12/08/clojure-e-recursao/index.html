@@ -142,9 +142,9 @@ var total = 0; for(var i=0; i &lt; numbers.length; i++) { total += numbers[i];
 </span><span class='line'>       (soma (rest valores) (+ (first valores) acumulador)))))</span></code></pre></td></tr></table></div></figure>
 
 
-<p>A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção <code>valores</code> é <code>empty?</code>. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor <code>acumulador</code>.</p>
+<p>A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva, precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção <code>valores</code> é vazia <code>(if (empty? valores))</code>. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor <code>acumulador</code>.</p>
 
-<p>Mas se a condição não for verdadeira, isso significa que precisamos processar o restante da coleção (<code>tail</code>), então recursivamente chamamos a mesma funcao <code>soma</code> apenas com o <code>tail</code>, o <code>acumulador</code> passado é a soma do primeiro (<code>first</code>) elemento da coleção. Executamos a função recursivamente até que <code>valores</code> seja <code>empty?</code>.</p>
+<p>Mas se a condição não for verdadeira, isso significa que precisamos processar o restante da coleção (<code>(rest valores)</code>), então recursivamente chamamos a mesma funcao <code>soma</code> apenas com <code>(rest valores)</code>, o <code>acumulador</code> passado é a soma do primeiro (<code>(+ (first valores) acumulador</code>) elemento da coleção. Executamos a função recursivamente até que <code>(if (empty? valores))</code> seja <code>true</code>.</p>
 
 <p>Cada chamada da função <code>soma</code> criará um novo escopo, onde <code>valores</code> e <code>acumulador</code> são bindados em outros valores, tudo sem mutações.</p>
 
