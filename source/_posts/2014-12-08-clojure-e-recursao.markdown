@@ -35,9 +35,9 @@ Vamos criar uma função chamada `soma`, que obviamente, soma todos os valores d
        (soma (rest valores) (+ (first valores) acumulador)))))
 ```
 
-A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção `valores` é `empty?`. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor `acumulador`.
+A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva, precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção `valores` é vazia `(if (empty? valores))`. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor `acumulador`.
 
-Mas se a condição não for verdadeira, isso significa que precisamos processar o restante da coleção (`tail`), então recursivamente chamamos a mesma funcao `soma` apenas com o `tail`, o `acumulador` passado é a soma do primeiro (`first`) elemento da coleção. Executamos a função recursivamente até que `valores` seja `empty?`.
+Mas se a condição não for verdadeira, isso significa que precisamos processar o restante da coleção (`(rest valores)`), então recursivamente chamamos a mesma funcao `soma` apenas com `(rest valores)`, o `acumulador` passado é a soma do primeiro (`(+ (first valores) acumulador`) elemento da coleção. Executamos a função recursivamente até que `(if (empty? valores))` seja `true`.
 
 Cada chamada da função `soma` criará um novo escopo, onde `valores` e `acumulador` são bindados em outros valores, tudo sem mutações.
 
