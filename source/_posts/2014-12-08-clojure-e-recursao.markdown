@@ -81,4 +81,10 @@ Com apenas uma mudanças ganhamos uma grande melhoria de performance:
 (soma (range 1000) 0) ; => "Elapsed time: 0.219801 msecs"
 ```
 
-Rodando a função `soma` antiga (com mil elementos na coleção), o tempo foi em média 4 vezes maior que a função que utiliza `recur`.
+Rodando o mesmo teste, mas utilizando a função soma antiga, é possível perceber quanto tempo ganhamos com esta mudança:
+
+```
+(soma (range 1000) 0) ; => "Elapsed time: 0.784321 msecs"
+```
+
+O tempo foi quase 4 vezes maior que a função que utiliza `recur`.
