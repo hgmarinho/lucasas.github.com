@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Pattern Matching, Clojure e Elixir"
-date: 2014-12-09 14:38:41 -0200
+date: 2014-12-10 23:38:41 -0200
 comments: true
 categories: clojure fp erlang elixir
 ---
