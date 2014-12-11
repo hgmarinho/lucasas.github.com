@@ -41,16 +41,8 @@ Alguns compiladores são espertos o suficiente para perceber que existe uma *tai
 
 {% gist 03de2a74ca03eac5d23a %}
 
-Com apenas uma mudanças ganhamos uma grande melhoria de performance:
+Com apenas uma mudança ganhamos uma grande melhoria de performance:
 
-```
-(soma (range 1000) 0) ; => "Elapsed time: 0.219801 msecs"
-```
+{% gist 221ca159ac50522b7530 %}
 
-Rodando o mesmo teste, mas utilizando a função soma antiga, é possível perceber quanto tempo ganhamos com esta mudança:
-
-```
-(soma (range 1000) 0) ; => "Elapsed time: 0.784321 msecs"
-```
-
-O tempo foi quase 4 vezes maior que a função que utiliza `recur`.
+O tempo foi quase 3 vezes maior que a função que utiliza `recur`.

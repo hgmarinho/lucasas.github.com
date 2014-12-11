@@ -24,5 +24,6 @@ Clojure é um [dialeto Lisp](http://pt.wikipedia.org/wiki/Lisp), o que na minha 
 
 Nesse primeiro post, [baseado no post "Clojure in 15 minutes" de Adam Bard](http://adambard.com/blog/clojure-in-15-minutes/), de uma série de vários outros que pretendo escrever, vou abordar o básico da linguagem.
 
+{% gist ab918490951b9d9b4db8 %}
 
 Isso é o básico para você conseguir brincar com Clojure.
