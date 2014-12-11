@@ -10,18 +10,7 @@ No último sábado, tivemos uma aprensentação do [@arthurgeek](https://twitter
 
 Clojure, assim como a maioria das linguagens funcionais, implementa *pattern matching*. Mas primeiro vamos ver um código que não utiliza *pattern matching*, o conhecido e famigerado *FizzBuzz*:
 
-```
-(def numeros (range 1 101))
-
-(doseq [n numeros]
-  (println
-    (let [ mod_3 (mod n 3) mod_5 (mod n 5) ]
-      (cond 
-        (and (= mod_3 0) (= mod_5 0)) "FizzBuzz"
-        (and (= mod_3 0) (> mod_5 0)) "Fizz"
-        (and (> mod_3 0) (= mod_5 0)) "Buzz"
-        :else n))))
-```
+{% gist 1c5aacfbef839ef6fae7 %}
 
 Primeiro criamos uma coleção chamada `numeros` com um range de 1 a 100. A função `doseq` itera a coleção de números, o restante do código é a implementação básica do *FizzBuzz*:
 
@@ -30,20 +19,7 @@ Primeiro criamos uma coleção chamada `numeros` com um range de 1 a 100. A fun�
 
 Vamos substituir as múltiplas condições da função `cond`, por um *pattern matching*, cujo uma das *features* é fazer asserção no conteúdo de uma variável:
 
-
-```
-(use '[clojure.core.match :only (match)])
-
-(def numeros (range 1 101))
-
-(doseq [n numeros]
-  (println
-    (match [(mod n 3) (mod n 5)]
-      [0 0] "FizzBuzz"
-      [0 _] "Fizz"
-      [_ 0] "Buzz"
-      :else n)))
-```
+{% gist ba623bf9ece9ae83388f %}
 
 Na primeira linha o objetivo é usar a função `use` para tornar disponível a função `match` pertencente ao módulo `clojure.core.match`, algo como importar a função para dentro do escopo onde iteramos a coleção.
 
@@ -53,31 +29,11 @@ Na segunda asserção utilizamos `_` para que o Clojure ignore o segundo valor, 
 
 *Pattern Matching* possui várias características legais que vou comentar ao longo dos outros posts. Mas uma *feature* do Eixir em particular que eu gosto muito, não existe (eu pelo menos não achei :P) no Clojure, que a capacidade fazer *match* em argumentos de funções. Por exemplo o seguinte código em Elixir:
 
-```
-defmodule Factorial do
-  def of(0), do: 1
-  def of(1), do: 1
-  def of(n) do
-    n * of(n-1)
-  end
-end
-
-Factorial.of(4) # 24
-```
+{% gist 59a7db92fef8c6051d44 %}
 
 Como sabemos chamadas recursivas precisam de uma condição de parada. Normalmente no cálculo de fatorial a condição é `(= n 0) ; => true`, porém, aprendemos com o exemplo anterior que é possível remover `if` usando *pattern matching*. Uma versão do cálculo fatorial usando `match` ficaria assim:
 
-```
-(use '[clojure.core.match :only (match)])
-
-(defn fatorial [n]
-  (match [n]
-    [0] 1
-    [1] 1
-    [n] (* n (fatorial (dec n)))))
-
-(fatorial 5) ; => 120
-```
+{% gist 9f1007e93186c8011840 %}
 
 Mesmo assim, o código, na minha opinião, não fica tão legível quanto fica no exemplo escrito em Elixir.
 
@@ -89,26 +45,10 @@ Como todos os dialetos Lisp, Clojure é uma linguagem [*homoiconic*](https://en.
 
 Criar uma *macro* é simples:
 
-```
-(defmacro minha-primeira-macro [nome]
-  (str "Olá " nome))
-```
-
-Para usá-la basta invocá-la como qualquer função:
-
-```
-(minha-primeira-macro "Lucas") ; => Olá Lucas
-```
+{% gist e2e7706dc7e154b0153e %}
 
 No exemplo do fatorial, onde queremos usar *pattern matching* na definição das funções, podemos utilizar a [macro `defun`](https://github.com/killme2008/defun), que por baixo dos panos cria uma função que utiliza o mesmo `match` que aprendemos a utilizar. Como havia dito, o código fica um pouco mais legível:
 
-```
-(use '[defun :only [defun]])
-
-(defun fatorial
-  ([0] 1)
-  ([1] 1)
-  ([n] (* n (fatorial (dec n)))))
-```
+{% gist 1127210fb9b53325821e %}
 
 *Macros* permitem que o compilador seja extendido por códigos escritos pelo usuário. Isso nos permite criar códigos que são mais concisos, legíveis e significativos.
