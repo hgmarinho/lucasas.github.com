@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Pattern Matching, Clojure, Erlang"
+title: "Pattern Matching, Clojure e Elixir"
 date: 2014-12-09 14:38:41 -0200
 comments: true
 categories: clojure fp erlang elixir
@@ -56,6 +56,7 @@ Na segunda asserção utilizamos `_` para que o Clojure ignore o segundo valor, 
 ```
 defmodule Factorial do
   def of(0), do: 1
+  def of(1), do: 1
   def of(n) do
     n * of(n-1)
   end
@@ -64,9 +65,23 @@ end
 Factorial.of(4) # 24
 ```
 
-Como sabemos chamadas recursivas precisam de uma condição de parada. Normalmente no cálculo de fatorial a condição é `(= n 0) ; => true`, porém, aprendemos com o exemplo anterior que é possível remover `if` usando *pattern matching*. Mesmo assim, o código, na minha opinião, não fica tão legível quanto fica no exemplo acima escrito em Elixir.
+Como sabemos chamadas recursivas precisam de uma condição de parada. Normalmente no cálculo de fatorial a condição é `(= n 0) ; => true`, porém, aprendemos com o exemplo anterior que é possível remover `if` usando *pattern matching*. Uma versão do cálculo fatorial usando `match` ficaria assim:
 
-O *pattern matching* do Elixir consegue executar a determinada função baseado no valor passado como argumento, ou seja, caso `Factorial.of(1)` seja invocada, o compilador sabe que a função que executa `n * of(n - 1)` será executada, quando `Factorial.of(0)` for chamado, o compilador executa a função que retorna `1`. A legibilidade do código aumenta absurdamente, conseguimos ler: *fatorial de 0 = 1* e *fatorial de n = n * fatorial(n - 1)*.
+```
+(use '[clojure.core.match :only (match)])
+
+(defn fatorial [n]
+  (match [n]
+    [0] 1
+    [1] 1
+    [n] (* n (fatorial (dec n)))))
+
+(fatorial 5) ; => 120
+```
+
+Mesmo assim, o código, na minha opinião, não fica tão legível quanto fica no exemplo escrito em Elixir.
+
+O *pattern matching* do Elixir consegue executar determinada função baseado no valor passado como argumento, ou seja, caso `Factorial.of(1)` seja invocada, o compilador sabe que a função que executa `n * of(n - 1)` deve ser executada, quando `Factorial.of(0)` for chamado, o compilador executa a função que retorna `1`. A legibilidade do código aumenta, conseguimos ler: *fatorial de 0 = 1* e *fatorial de n = n * fatorial(n - 1)*.
 
 A boa notícia é que conseguimos alcançar o mesmo comportamento em Clojure usando *macros*.
 
@@ -84,3 +99,16 @@ Para usá-la basta invocá-la como qualquer função:
 ```
 (minha-primeira-macro "Lucas") ; => Olá Lucas
 ```
+
+No exemplo do fatorial, onde queremos usar *pattern matching* na definição das funções, podemos utilizar a [macro `defun`](https://github.com/killme2008/defun), que por baixo dos panos cria uma função que utiliza o mesmo `match` que aprendemos a utilizar. Como havia dito, o código fica um pouco mais legível:
+
+```
+(use '[defun :only [defun]])
+
+(defun fatorial
+  ([0] 1)
+  ([1] 1)
+  ([n] (* n (fatorial (dec n)))))
+```
+
+*Macros* permitem que o compilador seja extendido por códigos escritos pelo usuário. Isso nos permite criar códigos que são mais concisos, legíveis e significativos.
