@@ -14,26 +14,13 @@ Vamos ver um pouco sobre recursão e como resolver problemas de *tail recursion*
 
 Você provavelmente já deve ter se deperado com algum código Javascript como o abaixo:
 
-```
-var numbers = [1, 5, 6, 8, 10, 3, 45];
-var total = 0;
-
-for(var i=0; i < numbers.length; i++) {
-  total += numbers[i];
-}
-```
+{% gist 3d7dc27b16e927f24e87 %}
 
 Tanto a variável `i` quanto a variável `total` são mutáveis, o que sabemos ser perigoso quando utilizamos paralelismo. Clojure não permite valores mutáveis, portanto, este tipo de problema não nos afeta. Em Clojure resolvemos estes problemas utilizando recursão, o jeito funcional de iterar uma coleção e construir um resultado.
 
 Vamos criar uma função chamada `soma`, que obviamente, soma todos os valores de uma coleção. O código a seguir usa recursão para resolver o problema:
 
-```
-(defn soma
-  ([valores acumulador]
-     (if (empty? valores)
-       acumulador
-       (soma (rest valores) (+ (first valores) acumulador)))))
-```
+{% gist 568799f5dbca3aa2674b %}
 
 A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva, precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção `valores` é vazia `(if (empty? valores))`. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor `acumulador`.
 
@@ -41,23 +28,9 @@ Mas se a condição não for verdadeira, isso significa que precisamos processar
 
 Cada chamada da função `soma` criará um novo escopo, onde `valores` e `acumulador` são bindados em outros valores, tudo sem mutações.
 
-A chamada para a função `soma` fará o trabalho esperado:
+O único ponto é que a função `soma` chamada com poucos elementos não apresenta problemas de performance:
 
-```
-(soma [1 2 5] 0) ; => 8
-```
-
-A função `soma` chamada com poucos elementos não apresenta problemas de performance:
-
-```
-(time (soma [1 2 5] 0)) ; => "Elapsed time: 0.047669 msecs"
-```
-
-Porém, se chamarmos com um número grande de elementos:
-
-```
-(soma (range 10000) 0) ; => StackOverflowError   clojure.lang.ChunkedCons.more
-```
+{% gist 1dc2071de0b74f0f7c57 %}
 
 O código acima causa `10001` chamadas a função `soma`. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. Por fim, a milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória. 
 
@@ -66,14 +39,7 @@ Mas o que a milionésima primeira chamada fará com o resultado da milionésima?
 
 Alguns compiladores são espertos o suficiente para perceber que existe uma *tail recursion* e reescrevem a função utilizando um `loop` internamente. Mas, por limitações da JVM, Clojure não faz isso automaticamente. É necessário dizer ao compilador que você tem uma *tail recursion*. Em Clojure basta usar a função `recur`:
 
-```
-(defn soma
-  ([valores acumulador]
-     (if (empty? valores)
-       acumulador
-       (recur (rest valores) (+ (first valores) acumulador)))))
-        ; substituímos a função `soma` por `recur`
-```
+{% gist 03de2a74ca03eac5d23a %}
 
 Com apenas uma mudanças ganhamos uma grande melhoria de performance:
 
