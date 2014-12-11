@@ -24,15 +24,9 @@
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="pt-BR" />
   <meta name="description" content="Clojure E Recursão Dec 8th, 2014 5:16 pm, clojure, fp Vamos ver um pouco sobre recursão e como resolver problemas de tail recursion utilizando &hellip;" />
-  <meta property="og:description" content="Clojure E Recursão Dec 8th, 2014 5:16 pm, clojure, fp Vamos ver um pouco sobre recursão e como resolver problemas de tail recursion utilizando Clojure. Você provavelmente já deve ter se deperado com algum código Javascript como o abaixo: 1
-2
-3
-4
-5
-6
-var numbers = [1, 5, 6, 8, 10, 3, 45];
+  <meta property="og:description" content="Clojure E Recursão Dec 8th, 2014 5:16 pm, clojure, fp Vamos ver um pouco sobre recursão e como resolver problemas de tail recursion utilizando Clojure. Você provavelmente já deve ter se deperado com algum código Javascript como o abaixo: var numbers = [1, 5, 6, 8, 10, 3, 45];
 var total = 0; for(var i=0; i &lt; numbers.length; i++) { total += numbers[i];
-} Tanto a variável i quanto a &hellip;" />
+} Tanto a variável i quanto a variável &hellip;" />
   <meta property="og:url" content="http://lucasas.github.io/blog/2014/12/08/clojure-e-recursao/" />
   <meta property="og:image" content="http://lucasas.github.io/images/" />
 
@@ -112,34 +106,28 @@ var total = 0; for(var i=0; i &lt; numbers.length; i++) { total += numbers[i];
 
 <p>Você provavelmente já deve ter se deperado com algum código Javascript como o abaixo:</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var numbers = [1, 5, 6, 8, 10, 3, 45];
-</span><span class='line'>var total = 0;
-</span><span class='line'>
-</span><span class='line'>for(var i=0; i &lt; numbers.length; i++) {
-</span><span class='line'>  total += numbers[i];
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+<div><script src='https://gist.github.com/3d7dc27b16e927f24e87.js'></script>
+<noscript><pre><code>var numbers = [1, 5, 6, 8, 10, 3, 45];
+var total = 0;
+
+for(var i=0; i &lt; numbers.length; i++) {
+  total += numbers[i];
+}
+</code></pre></noscript></div>
 
 
 <p>Tanto a variável <code>i</code> quanto a variável <code>total</code> são mutáveis, o que sabemos ser perigoso quando utilizamos paralelismo. Clojure não permite valores mutáveis, portanto, este tipo de problema não nos afeta. Em Clojure resolvemos estes problemas utilizando recursão, o jeito funcional de iterar uma coleção e construir um resultado.</p>
 
 <p>Vamos criar uma função chamada <code>soma</code>, que obviamente, soma todos os valores de uma coleção. O código a seguir usa recursão para resolver o problema:</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(defn soma
-</span><span class='line'>  ([valores acumulador]
-</span><span class='line'>     (if (empty? valores)
-</span><span class='line'>       acumulador
-</span><span class='line'>       (soma (rest valores) (+ (first valores) acumulador)))))</span></code></pre></td></tr></table></div></figure>
+<div><script src='https://gist.github.com/568799f5dbca3aa2674b.js'></script>
+<noscript><pre><code>(defn soma
+  ([valores acumulador]
+     (if (empty? valores)
+       acumulador
+       (soma (rest valores) (+ (first valores) acumulador)))))
+
+(soma [1 2 5] 0) ; =&gt; 8</code></pre></noscript></div>
 
 
 <p>A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva, precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção <code>valores</code> é vazia <code>(if (empty? valores))</code>. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor <code>acumulador</code>.</p>
@@ -148,22 +136,15 @@ var total = 0; for(var i=0; i &lt; numbers.length; i++) { total += numbers[i];
 
 <p>Cada chamada da função <code>soma</code> criará um novo escopo, onde <code>valores</code> e <code>acumulador</code> são bindados em outros valores, tudo sem mutações.</p>
 
-<p>A chamada para a função <code>soma</code> fará o trabalho esperado:</p>
+<p>O único ponto é que a função <code>soma</code> chamada com poucos elementos não apresenta problemas de performance:</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(soma [1 2 5] 0) ; =&gt; 8</span></code></pre></td></tr></table></div></figure>
+<div><script src='https://gist.github.com/1dc2071de0b74f0f7c57.js'></script>
+<noscript><pre><code>(time (soma [1 2 5] 0)) ; =&gt; &quot;Elapsed time: 0.047669 msecs&quot;
 
+; chamada com um número grande de elementos:
 
-<p>A função <code>soma</code> chamada com poucos elementos não apresenta problemas de performance:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(time (soma [1 2 5] 0)) ; =&gt; "Elapsed time: 0.047669 msecs"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Porém, se chamarmos com um número grande de elementos:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(soma (range 10000) 0) ; =&gt; StackOverflowError   clojure.lang.ChunkedCons.more</span></code></pre></td></tr></table></div></figure>
+(soma (range 10000) 0) ; =&gt; StackOverflowError   clojure.lang.ChunkedCons.more
+</code></pre></noscript></div>
 
 
 <p>O código acima causa <code>10001</code> chamadas a função <code>soma</code>. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. Por fim, a milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória.</p>
@@ -172,33 +153,39 @@ var total = 0; for(var i=0; i &lt; numbers.length; i++) { total += numbers[i];
 
 <p>Alguns compiladores são espertos o suficiente para perceber que existe uma <em>tail recursion</em> e reescrevem a função utilizando um <code>loop</code> internamente. Mas, por limitações da JVM, Clojure não faz isso automaticamente. É necessário dizer ao compilador que você tem uma <em>tail recursion</em>. Em Clojure basta usar a função <code>recur</code>:</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(defn soma
-</span><span class='line'>  ([valores acumulador]
-</span><span class='line'>     (if (empty? valores)
-</span><span class='line'>       acumulador
-</span><span class='line'>       (recur (rest valores) (+ (first valores) acumulador)))))
-</span><span class='line'>        ; substituímos a função `soma` por `recur`</span></code></pre></td></tr></table></div></figure>
+<div><script src='https://gist.github.com/03de2a74ca03eac5d23a.js'></script>
+<noscript><pre><code>(defn soma
+  ([valores acumulador]
+     (if (empty? valores)
+       acumulador
+       (recur (rest valores) (+ (first valores) acumulador)))))
+        ; substituímos a função `soma` por `recur`</code></pre></noscript></div>
 
 
-<p>Com apenas uma mudanças ganhamos uma grande melhoria de performance:</p>
+<p>Com apenas uma mudança ganhamos uma grande melhoria de performance:</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(soma (range 1000) 0) ; =&gt; "Elapsed time: 0.219801 msecs"</span></code></pre></td></tr></table></div></figure>
+<div><script src='https://gist.github.com/221ca159ac50522b7530.js'></script>
+<noscript><pre><code>(defn soma
+  ([valores acumulador]
+     (if (empty? valores)
+       acumulador
+       (soma (rest valores) (+ (first valores) acumulador)))))
+
+(time (soma (range 1000) 0)) ; =&gt; &quot;Elapsed time: 1.936705 msecs&quot;
+
+(defn soma
+  ([valores acumulador]
+     (if (empty? valores)
+       acumulador
+       (recur (rest valores) (+ (first valores) acumulador)))))
+        ; substituímos a função `soma` por `recur`
+        
+(time (soma (range 1000) 0)) ; =&gt; &quot;Elapsed time: 0.755106 msecs&quot;
+        
+</code></pre></noscript></div>
 
 
-<p>Rodando o mesmo teste, mas utilizando a função soma antiga, é possível perceber quanto tempo ganhamos com esta mudança:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>(soma (range 1000) 0) ; =&gt; "Elapsed time: 0.784321 msecs"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>O tempo foi quase 4 vezes maior que a função que utiliza <code>recur</code>.</p>
+<p>O tempo foi quase 3 vezes maior que a função que utiliza <code>recur</code>.</p>
 
 
 
@@ -255,6 +242,10 @@ var total = 0; for(var i=0; i &lt; numbers.length; i++) { total += numbers[i];
               Clojure em 15 minutos
             </a>
           
+          
+            <a class="next-post" href="  /blog/2014/12/10/pattern-matching-clojure-erlang/" title="Próximo post: Pattern Matching, Clojure e Elixir">
+              Pattern Matching, Clojure e Elixir
+            </a>
           
         </div>
       

@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Clojure | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/clojure/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-09T09:54:20-02:00</updated>
+  <updated>2014-12-11T14:26:03-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -12,6 +12,125 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Pattern Matching, Clojure E Elixir]]></title>
+    <link href="http://lucasas.github.io/blog/2014/12/10/pattern-matching-clojure-erlang/"/>
+    <updated>2014-12-10T23:38:41-02:00</updated>
+    <id>http://lucasas.github.io/blog/2014/12/10/pattern-matching-clojure-erlang</id>
+    <content type="html"><![CDATA[<p>No último sábado, tivemos uma aprensentação do <a href="https://twitter.com/arthurgeek">@arthurgeek</a> e do <a href="https://twitter.com/almeidaricardo">@ricardo</a> sobre Elixir aqui no <a href="http://www.getninjas.com.br">GetNinjas</a>. Dentre as várias coisas interessantes da linguagem, eles mostraram <em>pattern matching</em> em funções. <!--more--></p>
+
+<p>Clojure, assim como a maioria das linguagens funcionais, implementa <em>pattern matching</em>. Mas primeiro vamos ver um código que não utiliza <em>pattern matching</em>, o conhecido e famigerado <em>FizzBuzz</em>:</p>
+
+<p><div><script src='https://gist.github.com/1c5aacfbef839ef6fae7.js'></script>
+<noscript><pre><code>(def numeros (range 1 101))
+ 
+(doseq [n numeros]
+  (println
+    (let [ mod_3 (mod n 3) mod_5 (mod n 5) ]
+      (cond 
+        (and (= mod_3 0) (= mod_5 0)) &quot;FizzBuzz&quot;
+        (and (= mod_3 0) (&gt; mod_5 0)) &quot;Fizz&quot;
+        (and (&gt; mod_3 0) (= mod_5 0)) &quot;Buzz&quot;
+        :else n))))</code></pre></noscript></div>
+</p>
+
+<p>Primeiro criamos uma coleção chamada <code>numeros</code> com um range de 1 a 100. A função <code>doseq</code> itera a coleção de números, o restante do código é a implementação básica do <em>FizzBuzz</em>:</p>
+
+<ol>
+<li>Calculamos o resto da divisão com 3 e 5, bindamos o resultado nos símbolos <code>mod_3</code> e <code>mod_5</code>, respectivamente.</li>
+<li>A função <code>cond</code> é similar ao <code>switch</code> de outras linguagens, aceitando múltiplas condições. O suficiente para implementarmos as quatro condições do <em>FizzBuzz</em>.</li>
+</ol>
+
+
+<p>Vamos substituir as múltiplas condições da função <code>cond</code>, por um <em>pattern matching</em>, cuja uma das <em>features</em> é fazer asserção no conteúdo de uma variável:</p>
+
+<p><div><script src='https://gist.github.com/ba623bf9ece9ae83388f.js'></script>
+<noscript><pre><code>(use &#39;[clojure.core.match :only (match)])
+
+(def numeros (range 1 101))
+
+(doseq [n numeros]
+  (println
+    (match [(mod n 3) (mod n 5)]
+      [0 0] &quot;FizzBuzz&quot;
+      [0 _] &quot;Fizz&quot;
+      [_ 0] &quot;Buzz&quot;
+      :else n)))
+</code></pre></noscript></div>
+</p>
+
+<p>Na primeira linha o objetivo é usar a função <code>use</code> para tornar disponível a função <code>match</code> pertencente ao módulo <code>clojure.core.match</code>, algo como importar a função para dentro do escopo onde iteramos a coleção.</p>
+
+<p>A função <code>match</code> define dentro dos <code>[]</code> os valores que podemos fazer asserção. A primeira asserção feita verifica se os dois valores são <code>0</code>, caso positivo <code>FizzBuzz</code> é retornado para a função <code>println</code>, caso contrário, a próxima asserção é feita, neste caso, se o primeiro valor <code>(mod n 3)</code> for <code>0</code>, o valor <code>Fizz</code> é retornado. Se essa asserção falhar, a terceira é feita verificando que <code>(mod n 5)</code> é <code>0</code>, retornando <code>Buzz</code>. Caso nenhuma asserção for verdadeira, a opção <code>else</code> é executada e o valor <code>n</code> é retornado.</p>
+
+<p>Na segunda asserção utilizamos <code>_</code> para que o Clojure ignore o segundo valor, ou seja, não importa o que <code>(mod n 5)</code> retorne, se o primeiro valor <code>(mod n 3)</code> for <code>0</code>, &ldquo;Fizz&rdquo; será retornado. O mesmo vale para a terceira asserção, obviamente, muda-se apenas o valor ao qual fazemos a verificação.</p>
+
+<p><em>Pattern Matching</em> possui várias características legais que vou comentar ao longo dos outros posts. Mas uma <em>feature</em> do Elixir em particular que eu gostei muito, não existe (eu pelo menos não achei :P) no Clojure, que a capacidade fazer <em>match</em> na declaração de funções. Por exemplo o seguinte código em Elixir:</p>
+
+<p><div><script src='https://gist.github.com/59a7db92fef8c6051d44.js'></script>
+<noscript><pre><code>defmodule Factorial do
+  def of(0), do: 1
+  def of(1), do: 1
+  def of(n) do
+    n * of(n-1)
+  end
+end
+
+Factorial.of(4) # 24
+</code></pre></noscript></div>
+</p>
+
+<p>O <em>pattern matching</em> do Elixir consegue executar determinada função baseado no valor passado como argumento, ou seja, caso <code>Factorial.of(1)</code> seja invocada, o compilador sabe que a função <code>n * of(n - 1)</code> deve ser executada, quando <code>Factorial.of(0)</code> for chamado, o compilador executa a função que retorna <code>1</code>. A legibilidade do código aumenta, conseguimos ler: <em>fatorial de 0 = 1</em> e <em>fatorial de n = n * fatorial(n - 1)</em>.</p>
+
+<p>Como sabemos chamadas recursivas precisam de uma condição de parada. Normalmente no cálculo de fatorial a condição é <code>(= n 0) ; =&gt; true</code>, porém, aprendemos com o exemplo anterior que é possível remover <code>if</code> usando <em>pattern matching</em>. Uma versão do cálculo fatorial usando <code>match</code> ficaria assim:</p>
+
+<p><div><script src='https://gist.github.com/9f1007e93186c8011840.js'></script>
+<noscript><pre><code>(use &#39;[clojure.core.match :only (match)])
+
+(defn fatorial [n]
+  (match [n]
+    [0] 1
+    [1] 1
+    [n] (* n (fatorial (dec n)))))
+
+(fatorial 5) ; =&gt; 120
+</code></pre></noscript></div>
+</p>
+
+<p>Mesmo assim, o código, na minha opinião, não fica tão legível quanto fica no exemplo escrito em Elixir.</p>
+
+<p>A boa notícia é que conseguimos alcançar o mesmo comportamento em Clojure usando <em>macros</em>.</p>
+
+<p>Como todos os dialetos Lisp, Clojure é uma linguagem <a href="https://en.wikipedia.org/wiki/Homoiconic"><em>homoiconic</em></a> que nos dá o poder de criar rotinas que escrevem código. Só tenha cuidado antes de criar uma <em>macro</em> porque é considerada uma má prática criá-las quando podemos resolver os problemas utilizando funções comuns.</p>
+
+<p>Criar uma <em>macro</em> é simples:</p>
+
+<p><div><script src='https://gist.github.com/e2e7706dc7e154b0153e.js'></script>
+<noscript><pre><code>(defmacro minha-primeira-macro [nome]
+  (str &quot;Olá &quot; nome))
+
+; Para usá-la basta invocá-la como qualquer função:
+
+(minha-primeira-macro &quot;Lucas&quot;) ; =&gt; Olá Lucas
+</code></pre></noscript></div>
+</p>
+
+<p>No exemplo do fatorial, onde queremos usar <em>pattern matching</em> na definição das funções, podemos utilizar a macro <a href="https://github.com/killme2008/defun">defun</a>, que por baixo dos panos cria uma função que utiliza o mesmo <code>match</code> que aprendemos a utilizar. Como havia dito, o código fica um pouco mais legível:</p>
+
+<p><div><script src='https://gist.github.com/1127210fb9b53325821e.js'></script>
+<noscript><pre><code>(use &#39;[defun :only [defun]])
+
+(defun fatorial
+  ([0] 1)
+  ([1] 1)
+  ([n] (* n (fatorial (dec n)))))
+</code></pre></noscript></div>
+</p>
+
+<p><em>Macros</em> permitem que o compilador seja extendido por códigos escritos pelo usuário. Isso nos permite criar códigos que são mais concisos, legíveis e significativos. <a href="http://clojure.org/macros">Leia mais</a> sobre esse poderoso recurso da linguagem.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Clojure E Recursão]]></title>
@@ -26,24 +145,29 @@
 
 <p>Você provavelmente já deve ter se deperado com algum código Javascript como o abaixo:</p>
 
-<pre><code>var numbers = [1, 5, 6, 8, 10, 3, 45];
+<p><div><script src='https://gist.github.com/3d7dc27b16e927f24e87.js'></script>
+<noscript><pre><code>var numbers = [1, 5, 6, 8, 10, 3, 45];
 var total = 0;
 
 for(var i=0; i &lt; numbers.length; i++) {
   total += numbers[i];
 }
-</code></pre>
+</code></pre></noscript></div>
+</p>
 
 <p>Tanto a variável <code>i</code> quanto a variável <code>total</code> são mutáveis, o que sabemos ser perigoso quando utilizamos paralelismo. Clojure não permite valores mutáveis, portanto, este tipo de problema não nos afeta. Em Clojure resolvemos estes problemas utilizando recursão, o jeito funcional de iterar uma coleção e construir um resultado.</p>
 
 <p>Vamos criar uma função chamada <code>soma</code>, que obviamente, soma todos os valores de uma coleção. O código a seguir usa recursão para resolver o problema:</p>
 
-<pre><code>(defn soma
+<p><div><script src='https://gist.github.com/568799f5dbca3aa2674b.js'></script>
+<noscript><pre><code>(defn soma
   ([valores acumulador]
      (if (empty? valores)
        acumulador
        (soma (rest valores) (+ (first valores) acumulador)))))
-</code></pre>
+
+(soma [1 2 5] 0) ; =&gt; 8</code></pre></noscript></div>
+</p>
 
 <p>A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva, precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção <code>valores</code> é vazia <code>(if (empty? valores))</code>. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor <code>acumulador</code>.</p>
 
@@ -51,20 +175,16 @@ for(var i=0; i &lt; numbers.length; i++) {
 
 <p>Cada chamada da função <code>soma</code> criará um novo escopo, onde <code>valores</code> e <code>acumulador</code> são bindados em outros valores, tudo sem mutações.</p>
 
-<p>A chamada para a função <code>soma</code> fará o trabalho esperado:</p>
+<p>O único ponto é que a função <code>soma</code> chamada com poucos elementos não apresenta problemas de performance:</p>
 
-<pre><code>(soma [1 2 5] 0) ; =&gt; 8
-</code></pre>
+<p><div><script src='https://gist.github.com/1dc2071de0b74f0f7c57.js'></script>
+<noscript><pre><code>(time (soma [1 2 5] 0)) ; =&gt; &quot;Elapsed time: 0.047669 msecs&quot;
 
-<p>A função <code>soma</code> chamada com poucos elementos não apresenta problemas de performance:</p>
+; chamada com um número grande de elementos:
 
-<pre><code>(time (soma [1 2 5] 0)) ; =&gt; "Elapsed time: 0.047669 msecs"
-</code></pre>
-
-<p>Porém, se chamarmos com um número grande de elementos:</p>
-
-<pre><code>(soma (range 10000) 0) ; =&gt; StackOverflowError   clojure.lang.ChunkedCons.more
-</code></pre>
+(soma (range 10000) 0) ; =&gt; StackOverflowError   clojure.lang.ChunkedCons.more
+</code></pre></noscript></div>
+</p>
 
 <p>O código acima causa <code>10001</code> chamadas a função <code>soma</code>. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. Por fim, a milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória.</p>
 
@@ -72,25 +192,39 @@ for(var i=0; i &lt; numbers.length; i++) {
 
 <p>Alguns compiladores são espertos o suficiente para perceber que existe uma <em>tail recursion</em> e reescrevem a função utilizando um <code>loop</code> internamente. Mas, por limitações da JVM, Clojure não faz isso automaticamente. É necessário dizer ao compilador que você tem uma <em>tail recursion</em>. Em Clojure basta usar a função <code>recur</code>:</p>
 
-<pre><code>(defn soma
+<p><div><script src='https://gist.github.com/03de2a74ca03eac5d23a.js'></script>
+<noscript><pre><code>(defn soma
+  ([valores acumulador]
+     (if (empty? valores)
+       acumulador
+       (recur (rest valores) (+ (first valores) acumulador)))))
+        ; substituímos a função `soma` por `recur`</code></pre></noscript></div>
+</p>
+
+<p>Com apenas uma mudança ganhamos uma grande melhoria de performance:</p>
+
+<p><div><script src='https://gist.github.com/221ca159ac50522b7530.js'></script>
+<noscript><pre><code>(defn soma
+  ([valores acumulador]
+     (if (empty? valores)
+       acumulador
+       (soma (rest valores) (+ (first valores) acumulador)))))
+
+(time (soma (range 1000) 0)) ; =&gt; &quot;Elapsed time: 1.936705 msecs&quot;
+
+(defn soma
   ([valores acumulador]
      (if (empty? valores)
        acumulador
        (recur (rest valores) (+ (first valores) acumulador)))))
         ; substituímos a função `soma` por `recur`
-</code></pre>
+        
+(time (soma (range 1000) 0)) ; =&gt; &quot;Elapsed time: 0.755106 msecs&quot;
+        
+</code></pre></noscript></div>
+</p>
 
-<p>Com apenas uma mudanças ganhamos uma grande melhoria de performance:</p>
-
-<pre><code>(soma (range 1000) 0) ; =&gt; "Elapsed time: 0.219801 msecs"
-</code></pre>
-
-<p>Rodando o mesmo teste, mas utilizando a função soma antiga, é possível perceber quanto tempo ganhamos com esta mudança:</p>
-
-<pre><code>(soma (range 1000) 0) ; =&gt; "Elapsed time: 0.784321 msecs"
-</code></pre>
-
-<p>O tempo foi quase 4 vezes maior que a função que utiliza <code>recur</code>.</p>
+<p>O tempo foi quase 3 vezes maior que a função que utiliza <code>recur</code>.</p>
 ]]></content>
   </entry>
   
@@ -117,9 +251,10 @@ bizarra. <!--more--></p>
 
 <p>Nesse primeiro post, <a href="http://adambard.com/blog/clojure-in-15-minutes/">baseado no post &ldquo;Clojure in 15 minutes&rdquo; de Adam Bard</a>, de uma série de vários outros que pretendo escrever, vou abordar o básico da linguagem.</p>
 
-<pre><code>; Comentários podem ser escritos com ponto e vírgula
+<p><div><script src='https://gist.github.com/ab918490951b9d9b4db8.js'></script>
+<noscript><pre><code>; Comentários podem ser escritos com ponto e vírgula
 
-; Clojure é escrito usando "forms", que são listas 
+; Clojure é escrito usando &quot;forms&quot;, que são listas 
 ; de argmentos dentro de () separados por espaço em branco.
 ;
 ; O primeiro argumento sempre é uma função ou macro e 
@@ -137,7 +272,7 @@ bizarra. <!--more--></p>
 (/ 2 1) ; =&gt; 2
 
 ; str criará uma nova string contendo todos argumentos passados
-(str "Hello" " " "World") ; =&gt; "Hello World"
+(str &quot;Hello&quot; &quot; &quot; &quot;World&quot;) ; =&gt; &quot;Hello World&quot;
 
 ; Testes de igualdade são sempre feitos com `=`:
 (= 1 1) ; =&gt; true
@@ -156,9 +291,9 @@ bizarra. <!--more--></p>
 ; Use `class` para verificar o tipo de um determinado valor
 (class 1) ; Inteiros literais são java.lang.Long por padrão
 (class 1.); Float literais são java.lang.Double
-(class ""); Strings sempre são envoltas de aspas duplas, e são java.lang.String
+(class &quot;&quot;); Strings sempre são envoltas de aspas duplas, e são java.lang.String
 (class false) ; Booleanos são java.lang.Boolean
-(class nil); O valor "null" é nil
+(class nil); O valor &quot;null&quot; é nil
 
 ; Collections e Sequences
 ;;;;;;;;;;;;;;;;;;;
@@ -168,31 +303,31 @@ bizarra. <!--more--></p>
 
 ; Listas
 ; Para não serem interpretadas como listas que devem ser lidas
-; como as anteriores, adicionamos `'`
-(class '(1 2 3)) ; =&gt; clojure.lang.PersistentList
+; como as anteriores, adicionamos `&#39;`
+(class &#39;(1 2 3)) ; =&gt; clojure.lang.PersistentList
 
 ; Usar a função `list` também é uma opção
 (class (list 1 2 3)) ; =&gt; clojure.lang.PersistentList
 
 ; Ambas estruturas são collections
-(coll? '(1 2 3)) ; =&gt; true
+(coll? &#39;(1 2 3)) ; =&gt; true
 (coll? [1 2 3]) ; =&gt; true
 
 ; Porém, apenas listas são sequencias
-(seq? '(1 2 3)) ; =&gt; true
+(seq? &#39;(1 2 3)) ; =&gt; true
 (seq? [1 2 3]) ; =&gt; false
 
 ; Use `cons` para adicionar um item no começo de uma lista ou vetor
 (cons 4 [1 2 3]) ; =&gt; (4 1 2 3)
-(cons 4 '(1 2 3)) ; =&gt; (4 1 2 3)
+(cons 4 &#39;(1 2 3)) ; =&gt; (4 1 2 3)
 
 ; Use `conj` para adicionar um item no começo de uma lista
 ; ou no fim de um vetor
 (conj [1 2 3] 4) ; =&gt; [1 2 3 4]
-(conj '(1 2 3) 4) ; =&gt; (4 1 2 3)
+(conj &#39;(1 2 3) 4) ; =&gt; (4 1 2 3)
 
 ; Use `concat` para juntar duas collections
-(concat [1 2] '(3 4)) ; =&gt; (1 2 3 4)
+(concat [1 2] &#39;(3 4)) ; =&gt; (1 2 3 4)
 
 ; Use `map` para percorrer uma collection retornando outra
 ; com o resultado da operação feita. Por exemplo: A função `inc`
@@ -213,11 +348,11 @@ bizarra. <!--more--></p>
 ; = (+ (+ (+ 1 3) 2) 1)
 ; =&gt; 7
 
-; Para criar uma lista literal de dados, use '
-'(+ 1 2) ; =&gt; (+ 1 2)
+; Para criar uma lista literal de dados, use &#39;
+&#39;(+ 1 2) ; =&gt; (+ 1 2)
 
 ; Para executá-la use `eval`
-(eval '(+ 1 2)) ; =&gt; 3
+(eval &#39;(+ 1 2)) ; =&gt; 3
 
 
 ; Funções
@@ -225,42 +360,42 @@ bizarra. <!--more--></p>
 
 ; Use `fn` para criar funções anônimas. 
 ; Uma função sempre retorna seu último statement.
-(fn [] "Olá") ; =&gt; fn
+(fn [] &quot;Olá&quot;) ; =&gt; fn
 
 ; Para invocá-la basta declará-la dentro de `()`
-((fn [] "Olá")) ; =&gt; "Olá"
+((fn [] &quot;Olá&quot;)) ; =&gt; &quot;Olá&quot;
 
 ; Para guardar uma função em uma variável basta usar `def`
-(def ola (fn [] "Olá"))
-(ola) ; =&gt; "Olá"
+(def ola (fn [] &quot;Olá&quot;))
+(ola) ; =&gt; &quot;Olá&quot;
 
 ; O processo pode ser encurtado usando `defn`
-(defn ola [] "Olá")
-(ola) ; =&gt; "Olá"
+(defn ola [] &quot;Olá&quot;)
+(ola) ; =&gt; &quot;Olá&quot;
 
 ; `[]` representa o conjunto de parâmetros recebidos pela função
 (defn ola [nome]
-  (str "Olá " nome))
-(ola "Lucas") ; =&gt; "Olá Lucas"
+  (str &quot;Olá &quot; nome))
+(ola &quot;Lucas&quot;) ; =&gt; &quot;Olá Lucas&quot;
 
 ; É possível criar funções com múltiplas assinaturas
 (defn ola
-  ([] "Olá desconhecido")
-  ([nome] (str "Olá " nome)))
-(ola "Lucas") ; =&gt; "Olá Lucas"
-(ola) ; =&gt; "Olá desconhecido"
+  ([] &quot;Olá desconhecido&quot;)
+  ([nome] (str &quot;Olá &quot; nome)))
+(ola &quot;Lucas&quot;) ; =&gt; &quot;Olá Lucas&quot;
+(ola) ; =&gt; &quot;Olá desconhecido&quot;
 
 ; Funções podem receber argumentos extras e disponibilizá-los
 ; em uma seq
 (defn funcao-com-muitos-argumentos [&amp; args]
-  (str "Você passou " (count args) " argumentos: " args))
-(funcao-com-muitos-argumentos 1 2 3) ; =&gt; "Você passou 3 argumentos: (1 2 3)"
+  (str &quot;Você passou &quot; (count args) &quot; argumentos: &quot; args))
+(funcao-com-muitos-argumentos 1 2 3) ; =&gt; &quot;Você passou 3 argumentos: (1 2 3)&quot;
 
 ; É possível receber argumentos pré-definidos e extras
 (defn funcao-com-muitos-argumentos [nome &amp; args]
-  (str "Oláá " nome ", você passou " (count args) " argumentos extra"))
-(funcao-com-muitos-argumentos "Lucas" 1 2 3)
-; =&gt; "Olá Lucas, você passou 3 argumentos extra"
+  (str &quot;Oláá &quot; nome &quot;, você passou &quot; (count args) &quot; argumentos extra&quot;))
+(funcao-com-muitos-argumentos &quot;Lucas&quot; 1 2 3)
+; =&gt; &quot;Olá Lucas, você passou 3 argumentos extra&quot;
 
 
 ; Hashmaps
@@ -272,8 +407,8 @@ bizarra. <!--more--></p>
 (class :a) ; =&gt; clojure.lang.Keyword
 
 ; Maps podem user qualquer tipo como chame, mas o mais comum é que sejam keywords
-(def stringmap (hash-map "a" 1, "b" 2, "c" 3))
-stringmap  ; =&gt; {"a" 1, "b" 2, "c" 3}
+(def stringmap (hash-map &quot;a&quot; 1, &quot;b&quot; 2, &quot;c&quot; 3))
+stringmap  ; =&gt; {&quot;a&quot; 1, &quot;b&quot; 2, &quot;c&quot; 3}
 
 (def keymap (hash-map :a 1 :b 2 :c 3))
 (keymap) ; =&gt; {:a 1, :c 3, :b 2} (Como todo HashMap, a ordem não é garantida)
@@ -286,7 +421,7 @@ stringmap  ; =&gt; {"a" 1, "b" 2, "c" 3}
 (:b keymap) ; =&gt; 2
 
 ; Não tente com String, isso não é Rails ;-)
-;("a" stringmap)
+;(&quot;a&quot; stringmap)
 ; =&gt; Exception: java.lang.String cannot be cast to clojure.lang.IFn
 
 ; Keywords que não existem no HashMap retornam sempre nil
@@ -322,8 +457,8 @@ keymap ; =&gt; {:a 1, :b 2, :c 3}
 
 ; Estruturas lógicas são macros no Clojure, e sua syntax
 ; é igualmente simples a todo resto.
-(if false "a" "b") ; =&gt; "b"
-(if false "a") ; =&gt; nil
+(if false &quot;a&quot; &quot;b&quot;) ; =&gt; &quot;b&quot;
+(if false &quot;a&quot;) ; =&gt; nil
 
 ; Use `let` para criar escopos temporários
 ; Neste exemplo, as variáveis `a` e `b` valem, respectivamente, `1` e `2`
@@ -338,20 +473,21 @@ E não podem ser utilizadas fora do `let`
 
 ; Grupos de statements podem ser feitos utilizando `do`:
 (do
-  (print "Olá")
-  "Mundo") ; =&gt; "Olá" (prints "Mundo")
+  (print &quot;Olá&quot;)
+  &quot;Mundo&quot;) ; =&gt; &quot;Olá&quot; (prints &quot;Mundo&quot;)
 
 ; Funções tem um `do` implícito
 (defn imprime-e-diz-ola [nome]
-  (print "Falando olá para " name)
-  (str "Olá " name))
-(imprime-e-diz-ola "Lucas") ;=&gt; "Olá Lucas" (prints "Falando olá para Lucas")
+  (print &quot;Falando olá para &quot; name)
+  (str &quot;Olá &quot; name))
+(imprime-e-diz-ola &quot;Lucas&quot;) ;=&gt; &quot;Olá Lucas&quot; (prints &quot;Falando olá para Lucas&quot;)
 
 ; `let` também possui `do` implícito
-(let [nome "Lucas"]
-  (print "Falando olá para " name)
-  (str "Olá " name)) ;=&gt; "Olá Lucas" (prints "Falando olá para Lucas")
-</code></pre>
+(let [nome &quot;Lucas&quot;]
+  (print &quot;Falando olá para &quot; name)
+  (str &quot;Olá &quot; name)) ;=&gt; &quot;Olá Lucas&quot; (prints &quot;Falando olá para Lucas&quot;)
+</code></pre></noscript></div>
+</p>
 
 <p>Isso é o básico para você conseguir brincar com Clojure.</p>
 ]]></content>
