@@ -31,7 +31,7 @@ Na segunda asserção utilizamos `_` para que o Clojure ignore o segundo valor, 
 
 {% gist 59a7db92fef8c6051d44 %}
 
-O *pattern matching* do Elixir consegue executar determinada função baseado no valor passado como argumento, ou seja, caso `Factorial.of(1)` seja invocada, o compilador sabe que a função `n * of(n - 1)` deve ser executada, quando `Factorial.of(0)` for chamado, o compilador executa a função que retorna `1`. A legibilidade do código aumenta, conseguimos ler: *fatorial de 0 = 1* e *fatorial de n = n * fatorial(n - 1)*.
+O *pattern matching* do Elixir consegue executar determinada função baseado no valor passado como argumento, ou seja, caso `Factorial.of(2)` seja invocada, o compilador sabe que a função `n * of(n - 1)` deve ser executada, quando `Factorial.of(0)` for chamado, o compilador executa a função que retorna `1` e quando `Factorial.of(1)` for chamado, a outra função que retorna `1` será executada. A legibilidade do código aumenta, conseguimos ler: *fatorial de 0 = 1* e *fatorial de n = n * fatorial(n - 1)*.
 
 Como sabemos chamadas recursivas precisam de uma condição de parada. Normalmente no cálculo de fatorial a condição é `(= n 0) ; => true`, porém, aprendemos com o exemplo anterior que é possível remover `if` usando *pattern matching*. Uma versão do cálculo fatorial usando `match` ficaria assim:
 
