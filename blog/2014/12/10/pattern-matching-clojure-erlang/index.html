@@ -158,7 +158,7 @@ Factorial.of(4) # 24
 </code></pre></noscript></div>
 
 
-<p>O <em>pattern matching</em> do Elixir consegue executar determinada função baseado no valor passado como argumento, ou seja, caso <code>Factorial.of(1)</code> seja invocada, o compilador sabe que a função <code>n * of(n - 1)</code> deve ser executada, quando <code>Factorial.of(0)</code> for chamado, o compilador executa a função que retorna <code>1</code>. A legibilidade do código aumenta, conseguimos ler: <em>fatorial de 0 = 1</em> e <em>fatorial de n = n * fatorial(n - 1)</em>.</p>
+<p>O <em>pattern matching</em> do Elixir consegue executar determinada função baseado no valor passado como argumento, ou seja, caso <code>Factorial.of(2)</code> seja invocada, o compilador sabe que a função <code>n * of(n - 1)</code> deve ser executada, quando <code>Factorial.of(0)</code> for chamado, o compilador executa a função que retorna <code>1</code> e quando <code>Factorial.of(1)</code> for chamado, a outra função que retorna <code>1</code> será executada. A legibilidade do código aumenta, conseguimos ler: <em>fatorial de 0 = 1</em> e <em>fatorial de n = n * fatorial(n - 1)</em>.</p>
 
 <p>Como sabemos chamadas recursivas precisam de uma condição de parada. Normalmente no cálculo de fatorial a condição é <code>(= n 0) ; =&gt; true</code>, porém, aprendemos com o exemplo anterior que é possível remover <code>if</code> usando <em>pattern matching</em>. Uma versão do cálculo fatorial usando <code>match</code> ficaria assim:</p>
 
