@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Erlang | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-12T14:06:35-02:00</updated>
+  <updated>2014-12-12T15:22:20-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -102,19 +102,24 @@ Factorial.of(4) # 24
 
 <p>A boa notícia é que conseguimos alcançar o mesmo comportamento em Clojure usando <em>macros</em>.</p>
 
-<p>Como todos os dialetos Lisp, Clojure é uma linguagem <a href="https://en.wikipedia.org/wiki/Homoiconic"><em>homoiconic</em></a> que nos dá o poder de criar rotinas que escrevem código. Só tenha cuidado antes de criar uma <em>macro</em> porque é considerada uma má prática criá-las quando podemos resolver os problemas utilizando funções comuns.</p>
+<p>Como todos os dialetos Lisp, Clojure é uma linguagem <a href="https://en.wikipedia.org/wiki/Homoiconic"><em>homoiconic</em></a> que nos dá o poder de criar rotinas em Clojure que escrevem código Clojure.</p>
 
-<p>Criar uma <em>macro</em> é simples:</p>
+<p><em>Macros</em> são como funções, elas possuem nome, um documentação opcional, uma lista de argumentos e um corpo. O corpo, quase sempre retornará uma lista, o que faz bastante sentido, já que Clojure usa listas para representar chamada de funções, chamada de macros, e chamada para <em>forms</em> especiais. Tenha cuidado antes de criar uma <em>macro</em> porque é considerada uma má prática criá-las quando podemos resolver os problemas utilizando funções comuns.</p>
 
-<p><div><script src='https://gist.github.com/e2e7706dc7e154b0153e.js'></script>
-<noscript><pre><code>(defmacro minha-primeira-macro [nome]
-  (str &quot;Olá &quot; nome))
+<p>Vamos criar uma <em>macro</em> simples:</p>
 
-; Para usá-la basta invocá-la como qualquer função:
-
-(minha-primeira-macro &quot;Lucas&quot;) ; =&gt; Olá Lucas
-</code></pre></noscript></div>
+<p><div><script src='https://gist.github.com/ce316bddf5ce2324d968.js'></script>
+<noscript><pre><code>(defmacro chamada-funcao-hipster
+  &quot;Jeito hipster de chamar uma função ;-)&quot;
+  [expression]
+    (cons (second expression) (vector (first expression) (last expression))))
+ 
+(chamada-funcao-hipster (1 + 1))</code></pre></noscript></div>
 </p>
+
+<p>Repare que dentro de uma <em>macro</em> podemos usar qualquer outro código Clojure. Você usa o poder da linguagem para fazer a própria linguagem. A diferença principal entre funções e macros é que argumentos de funções são <em>evaluated</em> antes de serem passadas para a função, <em>macros</em> recebem argumentos como estruturas de dados não <em>evaluated</em>. Você pode comprovar isso tentando rodar <code>(1 + 1)</code>, observando que uma exception ocorre.</p>
+
+<p>Porém, quando passamos o mesmo código como argumento para a <em>macro</em> <code>chamada-funcao-hipster</code>, a lista não <em>evaluated</em> <code>(1 + 1)</code> é passada. Dentro do corpo da <em>macro</em>, manipulamos a lista para se tornar algo que o Clojure consiga <em>evaluate</em>: <code>(+ 1 1)</code>.</p>
 
 <p>No exemplo do fatorial, onde queremos usar <em>pattern matching</em> na definição das funções, podemos utilizar a macro <a href="https://github.com/killme2008/defun">defun</a>, que por baixo dos panos cria uma função que utiliza o mesmo <code>match</code> que aprendemos a utilizar. Como havia dito, o código fica um pouco mais legível:</p>
 
