@@ -41,13 +41,15 @@ Mesmo assim, o código, na minha opinião, não fica tão legível quanto fica n
 
 A boa notícia é que conseguimos alcançar o mesmo comportamento em Clojure usando *macros*.
 
-Como todos os dialetos Lisp, Clojure é uma linguagem [*homoiconic*](https://en.wikipedia.org/wiki/Homoiconic) que nos dá o poder de criar rotinas em Clojure que escrevem código Clojure. Macros são como funções, elas possuem nome, um documentação opcional, uma lista de argumentos e um corpo. O corpo, quase sempre retornará uma lista, o que faz bastante sentido, já que Clojure usa listas para representar chamada de funções, chamada de macros, e chamada para *forms* especiais. Tenha cuidado antes de criar uma *macro* porque é considerada uma má prática criá-las quando podemos resolver os problemas utilizando funções comuns.
+Como todos os dialetos Lisp, Clojure é uma linguagem [*homoiconic*](https://en.wikipedia.org/wiki/Homoiconic) que nos dá o poder de criar rotinas em Clojure que escrevem código Clojure. 
+
+*Macros* são como funções, elas possuem nome, um documentação opcional, uma lista de argumentos e um corpo. O corpo, quase sempre retornará uma lista, o que faz bastante sentido, já que Clojure usa listas para representar chamada de funções, chamada de macros, e chamada para *forms* especiais. Tenha cuidado antes de criar uma *macro* porque é considerada uma má prática criá-las quando podemos resolver os problemas utilizando funções comuns.
 
 Vamos criar uma *macro* simples:
 
 {% gist ce316bddf5ce2324d968 %}
 
-Repare que dentro de uma *macro* podemos usar qualquer outro código Clojure. Você usa o poder da linguagem para fazer a própria linguagem. A diferença principal entre funções e macros é que argumentos de funções são *evaluated* antes de serem passadas para a função, *macros* recebem argumentos como estruturas de dados não *evaluated*. Você pode comprovar isso tentando rodar `(1 + 1)`, observando que uma exception.
+Repare que dentro de uma *macro* podemos usar qualquer outro código Clojure. Você usa o poder da linguagem para fazer a própria linguagem. A diferença principal entre funções e macros é que argumentos de funções são *evaluated* antes de serem passadas para a função, *macros* recebem argumentos como estruturas de dados não *evaluated*. Você pode comprovar isso tentando rodar `(1 + 1)`, observando que uma exception ocorre.
 
 Porém, quando passamos o mesmo código como argumento para a *macro* `chamada-funcao-hipster`, a lista não *evaluated* `(1 + 1)` é passada. Dentro do corpo da *macro*, manipulamos a lista para se tornar algo que o Clojure consiga *evaluate*: `(+ 1 1)`.
 
