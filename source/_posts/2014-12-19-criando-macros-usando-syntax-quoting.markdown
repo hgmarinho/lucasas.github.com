@@ -48,4 +48,4 @@ Podemos informar ao Clojure que faça *unquote* utilizando *til* (~):
 
 {% gist afddd9cca1f57dc6b41f %}
 
-Quando um *til* aparece dentro de um código *syntax quoted*, o Clojure faz um *evaluate* destes *forms*. No próximo post falremos sobre *Unquote Splicing*. 
+Quando um *til* aparece dentro de um código *syntax quoted*, o Clojure faz um *evaluate* destes *forms*. No próximo post falaremos sobre [*Unquote Splicing*](http://lucasas.github.io/blog/2015/01/09/aumente-o-poder-das-suas-macros-usando-unquote-splicing). 
