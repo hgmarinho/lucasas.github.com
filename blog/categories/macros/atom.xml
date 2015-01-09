@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Macros | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/macros/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-19T20:37:02-02:00</updated>
+  <updated>2015-01-09T01:11:02-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -104,7 +104,7 @@
 ; =&gt; (if (clojure.core/not (&gt; 2 1)) (do ((println &quot;If invertido&quot;))))</code></pre></noscript></div>
 </p>
 
-<p>Quando um <em>til</em> aparece dentro de um código <em>syntax quoted</em>, o Clojure faz um <em>evaluate</em> destes <em>forms</em>. No próximo post falremos sobre <em>Unquote Splicing</em>.</p>
+<p>Quando um <em>til</em> aparece dentro de um código <em>syntax quoted</em>, o Clojure faz um <em>evaluate</em> destes <em>forms</em>. No próximo post falaremos sobre <a href="http://lucasas.github.io/blog/2015/01/09/aumente-o-poder-das-suas-macros-usando-unquote-splicing"><em>Unquote Splicing</em></a>.</p>
 ]]></content>
   </entry>
   

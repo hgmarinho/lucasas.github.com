@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Fp | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/fp/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2014-12-19T20:37:02-02:00</updated>
+  <updated>2015-01-09T01:11:02-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -12,6 +12,56 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Aumente O Poder Das Suas Macros Usando Unquote Splicing]]></title>
+    <link href="http://lucasas.github.io/blog/2015/01/09/aumente-o-poder-das-suas-macros-usando-unquote-splicing/"/>
+    <updated>2015-01-09T00:18:50-02:00</updated>
+    <id>http://lucasas.github.io/blog/2015/01/09/aumente-o-poder-das-suas-macros-usando-unquote-splicing</id>
+    <content type="html"><![CDATA[<p>No post anterior, aprendemos a criar <em>macros</em> que aumentam significativamente a legibilidade do nosso código. Porém, deixamos um detalhe importante para trás: <em>Unquote Splicing</em> <!-- more --></p>
+
+<p>No final do <a href="http://lucasas.github.io/blog/2014/12/19/criando-macros-usando-syntax-quoting">último post</a> criamos uma <em>macro</em> chamada <code>unless</code>, que basicamente executa múltiplas expressões caso uma determinada condição seja <code>false</code>.</p>
+
+<p><div><script src='https://gist.github.com/afddd9cca1f57dc6b41f.js'></script>
+<noscript><pre><code>(defmacro unless
+  [test &amp; branches]
+  `(if (not ~test) (do ~branches)))
+ 
+(macroexpand &#39;(unless (&gt; 2 1) (println &quot;If invertido&quot;)))
+; =&gt; (if (clojure.core/not (&gt; 2 1)) (do ((println &quot;If invertido&quot;))))</code></pre></noscript></div>
+</p>
+
+<p>Usamos a função <code>macroexpand</code> para exibir qual código será <em>evaluated</em>. Mas se tentarmos executar este código, além da string <code>If invertido</code>, a famosa <code>NullPointerException</code> será lançada. Mas por que isso acontece?</p>
+
+<p>Neste caso, o Clojure está tentando fazer <em>evaluate</em> do resultado da chamada a função <code>println</code>, que é <code>nil</code>. Olhando a expressão com mais cuidado <code>(do ((println "If invertido"))))</code>, dá para perceber que existe um parantêses a mais na história, de maneira que o que é passado para a macro <code>do</code> é exatamente o valor <code>nil</code>: <code>(do (nil))</code>.</p>
+
+<p>Isso acontece porque quando fizemos o <em>unquote</em> do argumento <code>branches</code>, no exemplo <code>(println "If invertido")</code>, a lista foi <em>evaluated</em> e colocada no retorno da <em>macro</em>, como num processo similar a variáveis em um template, uma substituição é feita com o valor exato que foi <em>evaluated</em>.</p>
+
+<p>O <em>Unquote Splicing</em> foi criado exatamente para resolver este tipo de situação. A diferença principal é que diferentemente do <em>unquote</em> ele permite que múltiplos <em>forms</em> sejam inseridos no lugar de um único <em>unquote splicing</em>:</p>
+
+<p><div><script src='https://gist.github.com/29affef8d34d276195da.js'></script>
+<noscript><pre><code>`(+ ~(list 1 2 3)) ; =&gt; (clojure.core/+ (1 2 3))
+`(+ ~@(list 1 2 3)) ; =&gt; (clojure.core/+ 1 2 3)</code></pre></noscript></div>
+</p>
+
+<p>Devemos usá-lo para resolver o problema da macro <code>unless</code>:</p>
+
+<p><div><script src='https://gist.github.com/9352871097a6f04727d5.js'></script>
+<noscript><pre><code>(defmacro unless
+  [test &amp; branches]
+  `(if (not ~test) (do ~@branches)))
+ 
+(macroexpand &#39;(unless (&gt; 2 1) (println &quot;If invertido&quot;)))
+; =&gt; (if (clojure.core/not (&gt; 2 1)) (do (println &quot;If invertido&quot;)))</code></pre></noscript></div>
+</p>
+
+<p>Ao invocá-la não receberemos mais a exceção <code>NullPointerException</code>:</p>
+
+<p><div><script src='https://gist.github.com/eda92675e46021007567.js'></script>
+<noscript><pre><code>(unless (&gt; 2 3) (println &quot;If invertido&quot;)) ; =&gt; If invertido</code></pre></noscript></div>
+</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Criando Macros Com Syntax Quoting]]></title>
@@ -104,7 +154,7 @@
 ; =&gt; (if (clojure.core/not (&gt; 2 1)) (do ((println &quot;If invertido&quot;))))</code></pre></noscript></div>
 </p>
 
-<p>Quando um <em>til</em> aparece dentro de um código <em>syntax quoted</em>, o Clojure faz um <em>evaluate</em> destes <em>forms</em>. No próximo post falremos sobre <em>Unquote Splicing</em>.</p>
+<p>Quando um <em>til</em> aparece dentro de um código <em>syntax quoted</em>, o Clojure faz um <em>evaluate</em> destes <em>forms</em>. No próximo post falaremos sobre <a href="http://lucasas.github.io/blog/2015/01/09/aumente-o-poder-das-suas-macros-usando-unquote-splicing"><em>Unquote Splicing</em></a>.</p>
 ]]></content>
   </entry>
   
