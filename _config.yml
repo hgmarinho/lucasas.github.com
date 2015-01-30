@@ -108,3 +108,5 @@ category_meta_description_prefix: "Artigos da categoria: "
 
 tag_title_prefix: "Artigos sobre: "
 tag_meta_description_prefix: "Artigos sobre: "
+
+logo: "clojure.png"
