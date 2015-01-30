@@ -4,7 +4,7 @@
   <title><![CDATA[Programação, etc]]></title>
   <link href="http://lucasas.github.io/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2015-01-09T01:11:02-02:00</updated>
+  <updated>2015-01-30T15:33:56-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -12,6 +12,115 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Deixe Seu Código Mais Legível Usando Thread Macros]]></title>
+    <link href="http://lucasas.github.io/blog/2015/01/30/deixe-seu-codigo-mais-legivel-usando-thread-macros/"/>
+    <updated>2015-01-30T13:45:06-02:00</updated>
+    <id>http://lucasas.github.io/blog/2015/01/30/deixe-seu-codigo-mais-legivel-usando-thread-macros</id>
+    <content type="html"><![CDATA[<p>Clojure fornece várias maneiras de criar um <code>pipeline</code> de funções, dentro de um <code>let</code>, por exemplo, você pode fazer várias transformações sobre uma coleção. O problema é que muitas vezes esse <code>pipeline</code> pode causar confusão durante a leitura do código, especialmente para aqueles que não possuem experiência com linguagens funcionais. É possível deixá-lo mais legível usando as <em>thread macros</em>. <!-- more --></p>
+
+<p>Considere o exemplo abaixo que cria alguns livros (representando-os como <code>Map</code>):</p>
+
+<div><script src='https://gist.github.com/35434a76eee29aff322d.js'></script>
+<noscript><pre><code>(def ruby-a-linguagem-mais-divertida {:name &quot;Ruby a linguagem mais divertida&quot; :language &quot;Ruby&quot; :price 70})
+(def tdd {:name &quot;TDD na prática&quot; :language &quot;Java&quot; :price 80})
+(def ruby-metaprogramacao {:name &quot;Ruby e metaprogramação&quot; :language &quot;Ruby&quot; :price 60})</code></pre></noscript></div>
+
+
+<p>Com essa coleção de livros em mãos, agora é necessário somar o valor apenas dos livros referentes a linguagem Ruby:</p>
+
+<div><script src='https://gist.github.com/cf186a1b54ea29cfd4a6.js'></script>
+<noscript><pre><code>(defn total-price-of-ruby-books
+  [&amp; books]
+  (apply +
+    (map :price
+      (filter #(= (:language %) &quot;Ruby&quot;) 
+        (seq books)))))</code></pre></noscript></div>
+
+
+<p>Um desenvolvedor familiarizado com programação funcional, mais especificamente com Lisp, não terá dificuldades para entender o que se passa no código acima:</p>
+
+<ol>
+<li>A partir de uma sequência de livros</li>
+<li>Filtre todos cuja linguagem é Ruby</li>
+<li>Obtenha o preço de cada um deles</li>
+<li>Some o valor de todos eles</li>
+</ol>
+
+
+<p>Lembre-se que códigos Lisp são lidos mais facilmente de dentro para fora, um pouco diferente do que estamos acostumados a ver em outras linguagens.</p>
+
+<p>Clojure possui duas macros que ajudam na criação de códigos mais legíveis, na prática facilitam a leitura do <code>pipeline</code>, de um modo que podemos lê-lo de maneira sequencial. O código acima pode ser melhorado com o uso da macro <em>thread last</em> <code>-&gt;&gt;</code>:</p>
+
+<div><script src='https://gist.github.com/d775bd54692f0a5d7093.js'></script>
+<noscript><pre><code>(defn total-price-of-ruby-books
+  [&amp; books]
+  (-&gt;&gt; (seq books)
+       (filter #(= (:language %) &quot;Ruby&quot;))
+       (map :price)
+       (apply +)))</code></pre></noscript></div>
+
+
+<p>A macro <em>thread last</em> <code>-&gt;&gt;</code> pega o elemento passado no primeiro <code>form</code> e passa-o como último argumento do <code>form</code> seguinte. No código acima, isso significa passar <code>seq books</code> como último argumento para <code>filter #(= (:language %) "Ruby")</code>. O resultado do <code>filter</code> então é passado como último argumento do <code>map :price</code>, e assim por diante.</p>
+
+<p>Esse comportamente pode ser visto utilizando a macro <code>macroexpand-all</code>, que é capaz de retornar o resultado da chamada a macro <em>thread last</em>:</p>
+
+<div><script src='https://gist.github.com/a402ebb5296e1c08e6e4.js'></script>
+<noscript><pre><code>(use &#39;clojure.walk)
+(macroexpand-all &#39;(defn total-price-of-ruby-books
+  [&amp; books]
+  (-&gt;&gt; (seq books)
+       (filter #(= (:language %) &quot;Ruby&quot;))
+       (map :price)
+       (apply +))))
+
+; =&gt; (def total-price-of-ruby-books (fn* ([&amp; books] (apply + (map :price (filter (fn* [p1__875#] (= (:language p1__875#) &quot;Ruby&quot;)) (seq books)))))))</code></pre></noscript></div>
+
+
+<p>O código é quase idêntico a versão sem <em>thread last</em>, exceto pela função anônima que declaramos usando um <code>alias</code>.</p>
+
+<p>Existe outra macro que funciona de maneira bem semelhante e nos ajuda e muito a criar <code>pipelines</code> mais legíveis.</p>
+
+<p>Vamos supor que em algum momento seja necessário adicionar mais informações dentro do <code>Map</code> que representa cada um dos livros, por exemplo, informações sobre o autor:</p>
+
+<div><script src='https://gist.github.com/a76a781d5ab29a345023.js'></script>
+<noscript><pre><code>(def ruby-a-linguagem-mais-divertida 
+  {:name &quot;Ruby a linguagem mais divertida&quot; 
+   :language &quot;Ruby&quot; 
+   :price 70
+   :author {:name &quot;Lucas Souza&quot;
+            :email &quot;lucasas@gmail.com&quot;
+           }})</code></pre></noscript></div>
+
+
+<p>Se quisermos apenas o email do autor, normalmente faríamos <code>(:email (:author ruby-a-linguagem-mais-divertida))</code>. Com muitos <code>Map</code> aninhados o código pode se tornar novamente não muito legível.</p>
+
+<p>A macro <em>thread first</em> <code>-&gt;</code>, que passa um determinado <code>form</code> como segundo argumento ao invés do primeiro ao próximo <code>form</code>, pode deixar nosso último <code>pipeline</code> mais agradável.</p>
+
+<p>Executar <code>(-&gt; ruby-a-linguagem-mais-divertida :author :email)</code> é o mesmo que passar o <em>form</em> <code>ruby-a-linguagem-mais-divertida</code> como segundo argumento do <em>form</em> <code>:author</code>, ou seja, <code>(:author ruby-a-linguagem-mais-divertida)</code>. Por fim, passar o resultado do último form como segundo argumento do <em>form</em> <code>:email</code>, ou seja, <code>(:email {:email "lucasas@gmail.com", :name "Lucas Souza"})</code></p>
+
+<p>Usando a macro <code>macroexpand-all</code> é possível checar que o que ocorre é exatamente o que foi descrito acima:</p>
+
+<div><script src='https://gist.github.com/cbf45ffe7a5b104f26a1.js'></script>
+<noscript><pre><code>(def ruby-a-linguagem-mais-divertida 
+  {:name &quot;Ruby a linguagem mais divertida&quot; 
+   :language &quot;Ruby&quot; 
+   :price 70
+   :author {:name &quot;Lucas Souza&quot;
+            :email &quot;lucasas@gmail.com&quot;
+           }})
+           
+(use &#39;clojure.walk)
+(macroexpand-all &#39;(-&gt; ruby-a-linguagem-mais-divertida :author :email))
+; =&gt; (:email (:author ruby-a-linguagem-mais-divertida))</code></pre></noscript></div>
+
+
+<p>Em resumo, comprovamos que é possível deixar códigos com <code>pipeline</code> mais legíveis usando <em>thread first</em> e <em>thread last</em>.</p>
+
+<p>No próximo post vou mostrar que a combinação entre ambas pode ser mais útil ainda.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Aumente O Poder Das Suas Macros Usando Unquote Splicing]]></title>
