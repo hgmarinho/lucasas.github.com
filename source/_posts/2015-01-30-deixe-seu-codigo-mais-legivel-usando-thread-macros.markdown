@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "Deixe seu código mais legível usando Thread Macros"
+title: "Deixe seu código mais legível usando Threading Macros"
 date: 2015-01-30 13:45:06 -0200
 comments: true
 categories: clojure fp
 ---
 
-Clojure fornece várias maneiras de criar um `pipeline` de funções, dentro de um `let`, por exemplo, você pode fazer várias transformações sobre uma coleção. O problema é que muitas vezes esse `pipeline` pode causar confusão durante a leitura do código, especialmente para aqueles que não possuem experiência com linguagens funcionais. É possível deixá-lo mais legível usando as *thread macros*. <!-- more --> 
+Clojure fornece várias maneiras de criar um `pipeline` de funções, dentro de um `let`, por exemplo, você pode fazer várias transformações sobre uma coleção. O problema é que muitas vezes esse `pipeline` pode causar confusão durante a leitura do código, especialmente para aqueles que não possuem experiência com linguagens funcionais. É possível deixá-lo mais legível usando as *threading macros*. <!-- more --> 
 
 Considere o exemplo abaixo que cria alguns livros (representando-os como `Map`):
 
