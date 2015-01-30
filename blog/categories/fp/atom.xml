@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Fp | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/fp/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2015-01-30T15:39:28-02:00</updated>
+  <updated>2015-01-30T15:41:51-02:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Deixe Seu Código Mais Legível Usando Threading Macros]]></title>
-    <link href="http://lucasas.github.io/blog/2015/01/30/deixe-seu-codigo-mais-legivel-usando-thread-macros/"/>
+    <link href="http://lucasas.github.io/blog/2015/01/30/deixe-seu-codigo-mais-legivel-usando-threading-macros/"/>
     <updated>2015-01-30T13:45:06-02:00</updated>
-    <id>http://lucasas.github.io/blog/2015/01/30/deixe-seu-codigo-mais-legivel-usando-thread-macros</id>
+    <id>http://lucasas.github.io/blog/2015/01/30/deixe-seu-codigo-mais-legivel-usando-threading-macros</id>
     <content type="html"><![CDATA[<p>Clojure fornece várias maneiras de criar um <code>pipeline</code> de funções, dentro de um <code>let</code>, por exemplo, você pode fazer várias transformações sobre uma coleção. O problema é que muitas vezes esse <code>pipeline</code> pode causar confusão durante a leitura do código, especialmente para aqueles que não possuem experiência com linguagens funcionais. É possível deixá-lo mais legível usando as <em>threading macros</em>. <!-- more --></p>
 
 <p>Considere o exemplo abaixo que cria alguns livros (representando-os como <code>Map</code>):</p>
