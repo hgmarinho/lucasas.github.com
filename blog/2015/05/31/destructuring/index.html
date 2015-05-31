@@ -1,0 +1,338 @@
+
+<!doctype html>
+<html lang="pt-br">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  
+
+  
+
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=860">
+
+  <meta name="author" content="Lucas Souza" />
+  <link rel="publisher" href="https://plus.google.com/+lucasas" />
+  <meta property="og:title" content="Destructuring - Programação, etc" />
+  <meta property="og:site_name" content="Programação, etc" />
+  <meta property="og:type" content="article" />
+  <meta property="og:locale" content="pt-BR" />
+  <meta name="description" content="Destructuring May 31st, 2015 10:59 am, clojure, fp Destructuring é uma das features mais legais do Clojure, permitindo mapear valores individuais de &hellip;" />
+  <meta property="og:description" content="Destructuring May 31st, 2015 10:59 am, clojure, fp Destructuring é uma das features mais legais do Clojure, permitindo mapear valores individuais de um vetor ou lista para variáveis, deixando seu código mais legível e conciso. O exemplo mais simples é mapear valores de um vetor para variáveis independentes: (def point [1 2]) (let [[x y] point] (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt &hellip;" />
+  <meta property="og:url" content="http://lucasas.github.io/blog/2015/05/31/destructuring/" />
+  <meta property="og:image" content="http://lucasas.github.io/images/clojure.png" />
+
+  <meta property="article:author" content="https://www.facebook.com/lucasas85" />
+  <meta property="article:publisher" content="https://www.facebook.com/lucasas85" />
+
+  
+
+  <title>Destructuring - Programação, etc</title>
+
+  <link rel="canonical" href="http://lucasas.github.io/blog/2015/05/31/destructuring">
+
+  <link href="  /favicon.ico" rel="icon">
+  <link href="http://fonts.googleapis.com/css?family=Crete+Round:400" rel="stylesheet" type="text/css">
+  <link href="  /stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Programação, etc" type="application/atom+xml">
+</head>
+
+  <body  id="post" >
+    <div class="cover-image"></div>
+
+<header id="header" role="banner" class="internal-page">
+  <div class="content">
+    
+      <h1 class="h1"><a href="  /">Prog, etc</a></h1>
+    
+    
+  </div>
+</header>
+
+    <main role="main">
+      <div class="content">
+  <article role="article">
+    
+  <header>
+    <h1>
+    
+      
+        Destructuring
+      
+    
+    </h1>
+
+    
+      
+
+
+
+
+
+      <span class="meta">
+        <time class='entry-date' datetime='2015-05-31T10:59:23-03:00'><span class='date'><span class='date-month'>May</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2015</span></span> <span class='time'>10:59 am</span></time>,
+        
+
+  <span class="categories">
+    
+      <a class='category' href='  /blog/categories/clojure/'>clojure</a>, <a class='category' href='  /blog/categories/fp/'>fp</a>
+    
+  </span>
+
+
+        
+
+
+      </span>
+    
+  </header>
+
+
+
+  <p><em>Destructuring</em> é uma das features mais legais do Clojure, permitindo mapear valores individuais de um vetor ou lista para variáveis, deixando seu código mais legível e conciso. <!-- more --></p>
+
+<p>O exemplo mais simples é mapear valores de um vetor para variáveis independentes:</p>
+
+<div><script src='https://gist.github.com/eb30be9436bcbd7233f0.js'></script>
+<noscript><pre><code>(def point [1 2])
+
+(let [[x y] point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; &quot;x: 1 y: 2&quot;</code></pre></noscript></div>
+
+
+<p>No exemplo acima estamos mapeameando todos os valores do vetor passado, mas é possível ignorar alguns valores e pegar só os valores que você deseja:</p>
+
+<div><script src='https://gist.github.com/6f882f2a462351c967e6.js'></script>
+<noscript><pre><code>(def point [5 7])
+
+(let [[x] point]
+  (println &quot;x:&quot; x))</code></pre></noscript></div>
+
+
+<p>Caso queira ignorar um valor em uma posição específica, nomeie a variável com <code>_</code>, uma convenção adotada na maioria dos casos:</p>
+
+<div><script src='https://gist.github.com/89d59ad1da867f3dc412.js'></script>
+<noscript><pre><code>(def point [5 7])
+ 
+(let [[_ y] point]
+  (println &quot;y:&quot; y)) ; =&gt; &quot;y: 7&quot;</code></pre></noscript></div>
+
+
+<p>Quando criamos funções recursivas é muito comum precisarmos separar um vetor em <code>head</code> e <code>tail</code>. Utilizando destructuring a tarefa se torna muito simples:</p>
+
+<div><script src='https://gist.github.com/f6df849adffa3c6c7efc.js'></script>
+<noscript><pre><code>(def elements [0 1 2 3 5])
+ 
+(let [[head &amp; tail] elements]
+  (println &quot;head: &quot; head &quot; tail: &quot; tail)) ; =&gt; &quot;head: 0 tail: (1 2 3 5)&quot;</code></pre></noscript></div>
+
+
+<p>Se você precisar acessar o vetor com todos os elementos, basta usar a diretiva <code>:as</code>. Um <code>bind</code> será feito para o vetor:</p>
+
+<div><script src='https://gist.github.com/370147f21b2f4ed3018b.js'></script>
+<noscript><pre><code>(def elements [0 1 2 3 5])
+ 
+(let [[head &amp; tail :as full-elements] elements]
+  (println &quot;head: &quot; head &quot; tail: &quot; tail &quot;full-elements: &quot; full-elements)) ; =&gt; &quot;head: 0 tail: (1 2 3 5) full-elements: [0 1 2 3 5]&quot;</code></pre></noscript></div>
+
+
+<p>Podemos usar <em>destructuring</em> com mapas, o que muda é que agora será necessário passar a <code>key</code>, além do <em>local name</em>:</p>
+
+<div><script src='https://gist.github.com/3c70b36973e8d84c0d28.js'></script>
+<noscript><pre><code>(def point {:x 1 :y 4})
+
+(let [{x-value :x y-value :y} point]
+  (println &quot;x:&quot; x-value &quot;y:&quot; y-value)) ; =&gt; x: 1 y: 4</code></pre></noscript></div>
+
+
+<p>Nada impede que você criei os <em>locals</em> usando o mesmo nome das <code>keys</code>:</p>
+
+<div><script src='https://gist.github.com/b24435fe1de47dd6ff82.js'></script>
+<noscript><pre><code>(def point {:x 1 :y 4})
+ 
+(let [{x :x y :y} point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; x: 1 y: 4</code></pre></noscript></div>
+
+
+<p>Mas perceba que é meio redundante declarar <em>locals</em> com os mesmo nomes das <code>keys</code>. Pra evitar essa repetição, podemos utilizar a diretiva <code>:keys</code> que permite você passar as <code>keys</code> que você quer disponível:</p>
+
+<div><script src='https://gist.github.com/aef5bfd30f5bba293804.js'></script>
+<noscript><pre><code>(def point {:x 1 :y 4})
+ 
+(let [{:keys [x y]} point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; &quot;x: 1 y: 4&quot;</code></pre></noscript></div>
+
+
+<p>Em muitos casos não temos certeza que o mapa passado como parâmetro terá as chaves que esperamos, podendo nos causar dores de cabeça, lidando com valores <code>nil</code>. O normal nestes casos é atribuir um valor <em>default</em>, programando defensivamente:</p>
+
+<div><script src='https://gist.github.com/44a70bad685f30d54949.js'></script>
+<noscript><pre><code>(def point {:x 1})
+ 
+(let [{:keys [x y] :or {x 0 y 0}} point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; &quot;x: 1 y: 0&quot;</code></pre></noscript></div>
+
+
+<p>O interessante ao usar <em>destructuring</em> com mapas, é que podemos extrair valores <em>nested</em>, ou seja, valores de mapas dentro de mapas:</p>
+
+<div><script src='https://gist.github.com/5cd23394a563c5b9168a.js'></script>
+<noscript><pre><code>(def person {:name &quot;Lucas&quot; :address {:street &quot;Any Street&quot; :number &quot;321&quot;, :city &quot;São Paulo&quot;}})
+
+(let [{name :name {street :street city :city} :address} person]
+  (println name &quot; lives in &quot; city &quot; at &quot; street)) ; =&gt; &quot;Lucas lives in São Paulo at Any Street&quot;</code></pre></noscript></div>
+
+
+<p>Você pode ver mais detalhes sobre o uso de <em>destructuring</em> na (documentação)[<a href="http://clojure.org/special_forms">http://clojure.org/special_forms</a>].</p>
+
+<p>Por último, gostaria de ressaltar que você pode usar <em>destructuring</em> para fazer <em>binding</em> dentro do <em>let</em>, como foi feitos nos exemplos, e também em funções.</p>
+
+
+
+    <footer>
+      
+        <div class="sharing">
+  
+    <a href="//twitter.com/share" class="twitter-share-button" data-url="http://lucasas.github.io/blog/2015/05/31/destructuring/" data-via="lucasas" data-counturl="http://lucasas.github.io/blog/2015/05/31/destructuring/">Tweet</a>
+  
+
+  
+    <div class="fb-like" data-href="http://lucasas.github.io/blog/2015/05/31/destructuring/" data-layout="button_count" data-action="recommend" data-show-faces="true" data-share="true"></div>
+  
+</div>
+
+      
+
+      <div class="about-author">
+  <img src="http://www.gravatar.com/avatar/4eceec28506545e8ed6dd49dde519d2e?s=135" width="135" height="135" alt="Lucas Souza" />
+  <h3>Lucas Souza</h3>
+  
+    <div class="author-description">Software Developer na GetNinjas</div>
+  
+  <ul class="social-links">
+    <li>
+      <a href="https://github.com/lucasas" target="_blank">
+        <i class="icon-github">GitHub</i>
+      </a>
+    </li>
+    <li>
+      <a href="https://www.facebook.com/lucasas85" target="_blank">
+        <i class="icon-facebook">Facebook</i>
+      </a>
+    </li>
+    <li>
+      <a href="https://twitter.com/lucasas" target="_blank">
+        <i class="icon-twitter">Twitter</i>
+      </a>
+    </li>
+    <li>
+      <a href="  /atom.xml" target="_blank">
+        <i class="icon-feed">Feed</i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+      
+        <h4>Leia também:</h4>
+        <div class="others-posts">
+          
+            <a class="prev-post" href="  /blog/2015/01/30/deixe-seu-codigo-mais-legivel-usando-threading-macros/" title="Post anterior: Deixe seu código mais legível usando Threading Macros">
+              Deixe seu código mais legível usando Threading Macros
+            </a>
+          
+          
+        </div>
+      
+    </footer>
+  </article>
+  
+  <section class="post-comments">
+    <header>
+      <h2>Comentários:</h2>
+    </header>
+    
+      <div id="disqus_thread"></div>
+    
+  </section>
+
+
+</div>
+
+    </main>
+    <footer id="footer" role="contentinfo">
+  <div class="content">
+    <p class="copyright">Copyright &copy; 2015 - Lucas Souza</p>
+    <p class="powered-by">Powered by <a href="http://octopress.org">Octopress</a></p>
+  </div>
+</footer>
+
+    
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-57406068-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="  /javascripts/libs/jquery.min.js"><\/script>')</script>
+<script src="  /javascripts/application.js"></script>
+
+
+  
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id; js.async = true;
+    js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+
+
+  
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+  
+    <script type="text/javascript">
+      var disqus_shortname = 'programaoetc';
+      
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://lucasas.github.io/blog/2015/05/31/destructuring/';
+        var disqus_url = 'http://lucasas.github.io/blog/2015/05/31/destructuring/';
+        var disqus_script = 'embed.js';
+      
+
+      (function () {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }());
+    </script>
+  
+
+
+  </body>
+</html>

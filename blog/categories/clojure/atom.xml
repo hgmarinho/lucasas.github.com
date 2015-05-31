@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Clojure | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/clojure/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2015-05-31T12:25:39-03:00</updated>
+  <updated>2015-05-31T12:28:41-03:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -12,6 +12,109 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Destructuring]]></title>
+    <link href="http://lucasas.github.io/blog/2015/05/31/destructuring/"/>
+    <updated>2015-05-31T10:59:23-03:00</updated>
+    <id>http://lucasas.github.io/blog/2015/05/31/destructuring</id>
+    <content type="html"><![CDATA[<p><em>Destructuring</em> é uma das features mais legais do Clojure, permitindo mapear valores individuais de um vetor ou lista para variáveis, deixando seu código mais legível e conciso. <!-- more --></p>
+
+<p>O exemplo mais simples é mapear valores de um vetor para variáveis independentes:</p>
+
+<p><div><script src='https://gist.github.com/eb30be9436bcbd7233f0.js'></script>
+<noscript><pre><code>(def point [1 2])
+
+(let [[x y] point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; &quot;x: 1 y: 2&quot;</code></pre></noscript></div>
+</p>
+
+<p>No exemplo acima estamos mapeameando todos os valores do vetor passado, mas é possível ignorar alguns valores e pegar só os valores que você deseja:</p>
+
+<p><div><script src='https://gist.github.com/6f882f2a462351c967e6.js'></script>
+<noscript><pre><code>(def point [5 7])
+
+(let [[x] point]
+  (println &quot;x:&quot; x))</code></pre></noscript></div>
+</p>
+
+<p>Caso queira ignorar um valor em uma posição específica, nomeie a variável com <code>_</code>, uma convenção adotada na maioria dos casos:</p>
+
+<p><div><script src='https://gist.github.com/89d59ad1da867f3dc412.js'></script>
+<noscript><pre><code>(def point [5 7])
+ 
+(let [[_ y] point]
+  (println &quot;y:&quot; y)) ; =&gt; &quot;y: 7&quot;</code></pre></noscript></div>
+</p>
+
+<p>Quando criamos funções recursivas é muito comum precisarmos separar um vetor em <code>head</code> e <code>tail</code>. Utilizando destructuring a tarefa se torna muito simples:</p>
+
+<p><div><script src='https://gist.github.com/f6df849adffa3c6c7efc.js'></script>
+<noscript><pre><code>(def elements [0 1 2 3 5])
+ 
+(let [[head &amp; tail] elements]
+  (println &quot;head: &quot; head &quot; tail: &quot; tail)) ; =&gt; &quot;head: 0 tail: (1 2 3 5)&quot;</code></pre></noscript></div>
+</p>
+
+<p>Se você precisar acessar o vetor com todos os elementos, basta usar a diretiva <code>:as</code>. Um <code>bind</code> será feito para o vetor:</p>
+
+<p><div><script src='https://gist.github.com/370147f21b2f4ed3018b.js'></script>
+<noscript><pre><code>(def elements [0 1 2 3 5])
+ 
+(let [[head &amp; tail :as full-elements] elements]
+  (println &quot;head: &quot; head &quot; tail: &quot; tail &quot;full-elements: &quot; full-elements)) ; =&gt; &quot;head: 0 tail: (1 2 3 5) full-elements: [0 1 2 3 5]&quot;</code></pre></noscript></div>
+</p>
+
+<p>Podemos usar <em>destructuring</em> com mapas, o que muda é que agora será necessário passar a <code>key</code>, além do <em>local name</em>:</p>
+
+<p><div><script src='https://gist.github.com/3c70b36973e8d84c0d28.js'></script>
+<noscript><pre><code>(def point {:x 1 :y 4})
+
+(let [{x-value :x y-value :y} point]
+  (println &quot;x:&quot; x-value &quot;y:&quot; y-value)) ; =&gt; x: 1 y: 4</code></pre></noscript></div>
+</p>
+
+<p>Nada impede que você criei os <em>locals</em> usando o mesmo nome das <code>keys</code>:</p>
+
+<p><div><script src='https://gist.github.com/b24435fe1de47dd6ff82.js'></script>
+<noscript><pre><code>(def point {:x 1 :y 4})
+ 
+(let [{x :x y :y} point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; x: 1 y: 4</code></pre></noscript></div>
+</p>
+
+<p>Mas perceba que é meio redundante declarar <em>locals</em> com os mesmo nomes das <code>keys</code>. Pra evitar essa repetição, podemos utilizar a diretiva <code>:keys</code> que permite você passar as <code>keys</code> que você quer disponível:</p>
+
+<p><div><script src='https://gist.github.com/aef5bfd30f5bba293804.js'></script>
+<noscript><pre><code>(def point {:x 1 :y 4})
+ 
+(let [{:keys [x y]} point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; &quot;x: 1 y: 4&quot;</code></pre></noscript></div>
+</p>
+
+<p>Em muitos casos não temos certeza que o mapa passado como parâmetro terá as chaves que esperamos, podendo nos causar dores de cabeça, lidando com valores <code>nil</code>. O normal nestes casos é atribuir um valor <em>default</em>, programando defensivamente:</p>
+
+<p><div><script src='https://gist.github.com/44a70bad685f30d54949.js'></script>
+<noscript><pre><code>(def point {:x 1})
+ 
+(let [{:keys [x y] :or {x 0 y 0}} point]
+  (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; &quot;x: 1 y: 0&quot;</code></pre></noscript></div>
+</p>
+
+<p>O interessante ao usar <em>destructuring</em> com mapas, é que podemos extrair valores <em>nested</em>, ou seja, valores de mapas dentro de mapas:</p>
+
+<p><div><script src='https://gist.github.com/5cd23394a563c5b9168a.js'></script>
+<noscript><pre><code>(def person {:name &quot;Lucas&quot; :address {:street &quot;Any Street&quot; :number &quot;321&quot;, :city &quot;São Paulo&quot;}})
+
+(let [{name :name {street :street city :city} :address} person]
+  (println name &quot; lives in &quot; city &quot; at &quot; street)) ; =&gt; &quot;Lucas lives in São Paulo at Any Street&quot;</code></pre></noscript></div>
+</p>
+
+<p>Você pode ver mais detalhes sobre o uso de <em>destructuring</em> na (documentação)[<a href="http://clojure.org/special_forms">http://clojure.org/special_forms</a>].</p>
+
+<p>Por último, gostaria de ressaltar que você pode usar <em>destructuring</em> para fazer <em>binding</em> dentro do <em>let</em>, como foi feitos nos exemplos, e também em funções.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Deixe Seu Código Mais Legível Usando Threading Macros]]></title>
@@ -388,102 +491,6 @@ Factorial.of(4) # 24
 </p>
 
 <p><em>Macros</em> permitem que o compilador seja extendido por códigos escritos pelo usuário. Isso nos permite criar códigos que são mais concisos, legíveis e significativos. <a href="http://clojure.org/macros">Leia mais</a> sobre esse poderoso recurso da linguagem.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Clojure E Recursão]]></title>
-    <link href="http://lucasas.github.io/blog/2014/12/08/clojure-e-recursao/"/>
-    <updated>2014-12-08T17:16:46-02:00</updated>
-    <id>http://lucasas.github.io/blog/2014/12/08/clojure-e-recursao</id>
-    <content type="html"><![CDATA[<p>Vamos ver um pouco sobre recursão e como resolver problemas de <em>tail recursion</em> utilizando Clojure. <!--more--></p>
-
-<p><figure>
-  <img src="/images/posts/recursion.jpg"/>
-</figure></p>
-
-<p>Você provavelmente já deve ter se deperado com algum código Javascript como o abaixo:</p>
-
-<p><div><script src='https://gist.github.com/3d7dc27b16e927f24e87.js'></script>
-<noscript><pre><code>var numbers = [1, 5, 6, 8, 10, 3, 45];
-var total = 0;
-
-for(var i=0; i &lt; numbers.length; i++) {
-  total += numbers[i];
-}
-</code></pre></noscript></div>
-</p>
-
-<p>Tanto a variável <code>i</code> quanto a variável <code>total</code> são mutáveis, o que sabemos ser perigoso quando utilizamos paralelismo. Clojure não permite valores mutáveis, portanto, este tipo de problema não nos afeta. Em Clojure resolvemos estes problemas utilizando recursão, o jeito funcional de iterar uma coleção e construir um resultado.</p>
-
-<p>Vamos criar uma função chamada <code>soma</code>, que obviamente, soma todos os valores de uma coleção. O código a seguir usa recursão para resolver o problema:</p>
-
-<p><div><script src='https://gist.github.com/568799f5dbca3aa2674b.js'></script>
-<noscript><pre><code>(defn soma
-  ([valores acumulador]
-     (if (empty? valores)
-       acumulador
-       (soma (rest valores) (+ (first valores) acumulador)))))
-
-(soma [1 2 5] 0) ; =&gt; 8</code></pre></noscript></div>
-</p>
-
-<p>A função recebe dois argumentos, a coleção que será iterada e um acumulador da soma de cada elemento. Como toda função recursiva, precisamos de uma condição de parada, no exemplo essa condição verifica se a coleção <code>valores</code> é vazia <code>(if (empty? valores))</code>. Se a condição for verdadeira, sabemos que todos os elementos da coleção foram somados, por isso, retornamos o valor <code>acumulador</code>.</p>
-
-<p>Mas se a condição não for verdadeira, isso significa que precisamos processar o restante da coleção <code>(rest valores)</code>, então recursivamente chamamos a mesma funcao <code>soma</code> apenas com <code>(rest valores)</code>, o <code>acumulador</code> passado é a soma do primeiro <code>(+ (first valores) acumulador</code> elemento da coleção. Executamos a função recursivamente até que <code>(if (empty? valores))</code> seja <code>true</code>.</p>
-
-<p>Cada chamada da função <code>soma</code> criará um novo escopo, onde <code>valores</code> e <code>acumulador</code> são bindados em outros valores, tudo sem mutações.</p>
-
-<p>O único ponto é que a função <code>soma</code> chamada com poucos elementos não apresenta problemas de performance:</p>
-
-<p><div><script src='https://gist.github.com/1dc2071de0b74f0f7c57.js'></script>
-<noscript><pre><code>(time (soma [1 2 5] 0)) ; =&gt; &quot;Elapsed time: 0.047669 msecs&quot;
-
-; chamada com um número grande de elementos:
-
-(soma (range 10000) 0) ; =&gt; StackOverflowError   clojure.lang.ChunkedCons.more
-</code></pre></noscript></div>
-</p>
-
-<p>O código acima causa <code>10001</code> chamadas a função <code>soma</code>. No momento da última chamada, a primeira chamada está esperando pela segunda, a segunda está esperando pela terceira, a terceira está esperando pela quarta, e assim sucessivamente. Por fim, a milionésima primeira chamada está esperando pela milionésima. Cada uma destas chamadas estarão consumindo memória.</p>
-
-<p>Mas o que a milionésima primeira chamada fará com o resultado da milionésima? Absolutamente nada. A chamada recursiva é a última coisa feita, por isso o resultado é apenas passado de volta para o <em>caller</em>, que passa o resultado para outro <em>caller</em> até que chegue no <em>caller</em> original. Esse <em>pattern</em> é conhecido como <em>tail-recursion</em>.</p>
-
-<p>Alguns compiladores são espertos o suficiente para perceber que existe uma <em>tail recursion</em> e reescrevem a função utilizando um <code>loop</code> internamente. Mas, por limitações da JVM, Clojure não faz isso automaticamente. É necessário dizer ao compilador que você tem uma <em>tail recursion</em>. Em Clojure basta usar a função <code>recur</code>:</p>
-
-<p><div><script src='https://gist.github.com/03de2a74ca03eac5d23a.js'></script>
-<noscript><pre><code>(defn soma
-  ([valores acumulador]
-     (if (empty? valores)
-       acumulador
-       (recur (rest valores) (+ (first valores) acumulador)))))
-        ; substituímos a função `soma` por `recur`</code></pre></noscript></div>
-</p>
-
-<p>Com apenas uma mudança ganhamos uma grande melhoria de performance:</p>
-
-<p><div><script src='https://gist.github.com/221ca159ac50522b7530.js'></script>
-<noscript><pre><code>(defn soma
-  ([valores acumulador]
-     (if (empty? valores)
-       acumulador
-       (soma (rest valores) (+ (first valores) acumulador)))))
-
-(time (soma (range 1000) 0)) ; =&gt; &quot;Elapsed time: 1.936705 msecs&quot;
-
-(defn soma
-  ([valores acumulador]
-     (if (empty? valores)
-       acumulador
-       (recur (rest valores) (+ (first valores) acumulador)))))
-        ; substituímos a função `soma` por `recur`
-        
-(time (soma (range 1000) 0)) ; =&gt; &quot;Elapsed time: 0.755106 msecs&quot;
-        
-</code></pre></noscript></div>
-</p>
-
-<p>O tempo foi quase 3 vezes maior que a função que utiliza <code>recur</code>.</p>
 ]]></content>
   </entry>
   
