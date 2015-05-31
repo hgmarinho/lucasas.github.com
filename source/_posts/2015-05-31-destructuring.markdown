@@ -6,7 +6,7 @@ comments: true
 categories: clojure fp
 ---
 
-*Destructuring* é uma das features mais legais do Clojure, permitindo mapear valores individuais de um vetor ou lista para variáveis, deixando seu código mais legível e conciso. <!-- more -->
+*Destructuring* é uma das features mais legais do Clojure, permitindo mapear valores individuais de um vetor ou mapa para variáveis, deixando seu código mais legível e conciso. <!-- more -->
 
 O exemplo mais simples é mapear valores de um vetor para variáveis independentes:
 
@@ -24,7 +24,7 @@ Quando criamos funções recursivas é muito comum precisarmos separar um vetor 
 
 {% gist f6df849adffa3c6c7efc %}
 
-Se você precisar acessar o vetor com todos os elementos, basta usar a diretiva `:as`. Um `bind` será feito para o vetor:
+Se você precisar acessar o vetor com todos os elementos, basta usar a diretiva `:as`. Um *bind* será feito para o vetor:
 
 {% gist 370147f21b2f4ed3018b %}
 
@@ -36,7 +36,7 @@ Nada impede que você criei os *locals* usando o mesmo nome das `keys`:
 
 {% gist b24435fe1de47dd6ff82 %}
 
-Mas perceba que é meio redundante declarar *locals* com os mesmo nomes das `keys`. Pra evitar essa repetição, podemos utilizar a diretiva `:keys` que permite você passar as `keys` que você quer disponível:
+Mas perceba que é meio redundante declarar *locals* com os mesmos nomes das `keys`. Pra evitar essa repetição, podemos utilizar a diretiva `:keys` que permite você passar as *keys* que você quer disponível:
 
 {% gist aef5bfd30f5bba293804 %}
 
@@ -48,7 +48,7 @@ O interessante ao usar *destructuring* com mapas, é que podemos extrair valores
 
 {% gist 5cd23394a563c5b9168a %}
 
-Você pode ver mais detalhes sobre o uso de *destructuring* na (documentação)[http://clojure.org/special_forms].
+Você pode ver mais detalhes sobre o uso de *destructuring* na [documentação](http://clojure.org/special_forms).
 
 Por último, gostaria de ressaltar que você pode usar *destructuring* para fazer *binding* dentro do *let*, como foi feitos nos exemplos, e também em funções.
 
