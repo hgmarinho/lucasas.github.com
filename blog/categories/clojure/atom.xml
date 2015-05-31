@@ -4,7 +4,7 @@
   <title><![CDATA[Artigos Da Categoria: Clojure | Programação, etc]]></title>
   <link href="http://lucasas.github.io/blog/categories/clojure/atom.xml" rel="self"/>
   <link href="http://lucasas.github.io/"/>
-  <updated>2015-05-31T12:28:41-03:00</updated>
+  <updated>2015-05-31T12:33:23-03:00</updated>
   <id>http://lucasas.github.io/</id>
   <author>
     <name><![CDATA[Lucas Souza]]></name>
@@ -18,7 +18,7 @@
     <link href="http://lucasas.github.io/blog/2015/05/31/destructuring/"/>
     <updated>2015-05-31T10:59:23-03:00</updated>
     <id>http://lucasas.github.io/blog/2015/05/31/destructuring</id>
-    <content type="html"><![CDATA[<p><em>Destructuring</em> é uma das features mais legais do Clojure, permitindo mapear valores individuais de um vetor ou lista para variáveis, deixando seu código mais legível e conciso. <!-- more --></p>
+    <content type="html"><![CDATA[<p><em>Destructuring</em> é uma das features mais legais do Clojure, permitindo mapear valores individuais de um vetor ou mapa para variáveis, deixando seu código mais legível e conciso. <!-- more --></p>
 
 <p>O exemplo mais simples é mapear valores de um vetor para variáveis independentes:</p>
 
@@ -56,7 +56,7 @@
   (println &quot;head: &quot; head &quot; tail: &quot; tail)) ; =&gt; &quot;head: 0 tail: (1 2 3 5)&quot;</code></pre></noscript></div>
 </p>
 
-<p>Se você precisar acessar o vetor com todos os elementos, basta usar a diretiva <code>:as</code>. Um <code>bind</code> será feito para o vetor:</p>
+<p>Se você precisar acessar o vetor com todos os elementos, basta usar a diretiva <code>:as</code>. Um <em>bind</em> será feito para o vetor:</p>
 
 <p><div><script src='https://gist.github.com/370147f21b2f4ed3018b.js'></script>
 <noscript><pre><code>(def elements [0 1 2 3 5])
@@ -83,7 +83,7 @@
   (println &quot;x:&quot; x &quot;y:&quot; y)) ; =&gt; x: 1 y: 4</code></pre></noscript></div>
 </p>
 
-<p>Mas perceba que é meio redundante declarar <em>locals</em> com os mesmo nomes das <code>keys</code>. Pra evitar essa repetição, podemos utilizar a diretiva <code>:keys</code> que permite você passar as <code>keys</code> que você quer disponível:</p>
+<p>Mas perceba que é meio redundante declarar <em>locals</em> com os mesmos nomes das <code>keys</code>. Pra evitar essa repetição, podemos utilizar a diretiva <code>:keys</code> que permite você passar as <em>keys</em> que você quer disponível:</p>
 
 <p><div><script src='https://gist.github.com/aef5bfd30f5bba293804.js'></script>
 <noscript><pre><code>(def point {:x 1 :y 4})
@@ -110,7 +110,7 @@
   (println name &quot; lives in &quot; city &quot; at &quot; street)) ; =&gt; &quot;Lucas lives in São Paulo at Any Street&quot;</code></pre></noscript></div>
 </p>
 
-<p>Você pode ver mais detalhes sobre o uso de <em>destructuring</em> na (documentação)[<a href="http://clojure.org/special_forms">http://clojure.org/special_forms</a>].</p>
+<p>Você pode ver mais detalhes sobre o uso de <em>destructuring</em> na <a href="http://clojure.org/special_forms">documentação</a>.</p>
 
 <p>Por último, gostaria de ressaltar que você pode usar <em>destructuring</em> para fazer <em>binding</em> dentro do <em>let</em>, como foi feitos nos exemplos, e também em funções.</p>
 ]]></content>
