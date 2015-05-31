@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Artigos Da Categoria: Macros | Programação, etc]]></title>
+  <link href="http://lucasas.github.io/blog/categories/macros/atom.xml" rel="self"/>
+  <link href="http://lucasas.github.io/"/>
+  <updated>2015-05-31T12:25:39-03:00</updated>
+  <id>http://lucasas.github.io/</id>
+  <author>
+    <name><![CDATA[Lucas Souza]]></name>
+    <email><![CDATA[lucasas@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Criando Macros Com Syntax Quoting]]></title>
+    <link href="http://lucasas.github.io/blog/2014/12/19/criando-macros-usando-syntax-quoting/"/>
+    <updated>2014-12-19T19:43:40-02:00</updated>
+    <id>http://lucasas.github.io/blog/2014/12/19/criando-macros-usando-syntax-quoting</id>
+    <content type="html"><![CDATA[<p>No último post falei um pouco sobre <a href="http://lucasas.github.io/blog/2014/12/10/pattern-matching-clojure-erlang">macros</a>. Como <em>macros</em> é um assunto um pouco extenso, vou escrever mais alguns posts sobre detalhes avançados que podemos utilizar no dia-a-dia. <!-- more --></p>
+
+<p>Só relembrando: <em>Macros</em> permitem estender a própria linguagem, ou seja, escrever a própria linguagem do jeito que você quiser. Podemos pegar como exemplo a macro <code>if-not</code>:</p>
+
+<p><div><script src='https://gist.github.com/5502e5dfa9c79167b882.js'></script>
+<noscript><pre><code>(defmacro if-not
+  &quot;Evaluates test. If logical false, evaluates and returns then expr, 
+  otherwise else expr, if supplied, else nil.&quot;
+  {:added &quot;1.0&quot;}
+  ([test then] `(if-not ~test ~then nil))
+  ([test then else]
+   `(if (not ~test) ~then ~else)))</code></pre></noscript></div>
+</p>
+
+<p>Essa <em>macro</em> é built-in na própria linguagem, mas caso não existesse, ao invés de chamar a função <code>if</code> invertendo o valor booleano <code>(if (not (zero? 0)) :then :else)</code>, poderíamos criar a mesma macro e deixar a chamada de código mais concisa <code>(if-not (zero? 0) :then :else)</code>.</p>
+
+<p>A <em>macro</em> <code>when</code> é outro bom exemplo de como uma <em>macro</em> pode ajudar o código a ficar mais conciso:</p>
+
+<p><div><script src='https://gist.github.com/b95446596a42b66204ca.js'></script>
+<noscript><pre><code>(def idade 29)
+(when (&gt; idade 18)
+  (println &quot;pode beber champs&quot;)
+  (println &quot;só na dirige&quot;))</code></pre></noscript></div>
+</p>
+
+<p>Caso a condição passada seja <code>true</code>, um bloco com múltiplas chamadas é executado, similar ao <a href="https://clojuredocs.org/clojure.core/do"><code>do</code></a>. Na real, por baixo dos panos, a chamada na <em>macro</em> <code>when</code>, retorna uma lista que será <code>evaluated</code>. Mas que lista é esta? Vamos verificar usando a função <a href="https://clojuredocs.org/clojure.core/macroexpand">macroexpand</a>:</p>
+
+<p><div><script src='https://gist.github.com/a59b0bf59985df776119.js'></script>
+<noscript><pre><code>(def idade 29)
+(macroexpand &#39;(when (&gt; idade 18)
+  (println &quot;pode beber champs&quot;)
+  (println &quot;só na dirige&quot;)))
+ 
+; =&gt; (if (&gt; idade 18)(do (println &quot;pode beber champs&quot;) (println &quot;só na dirige&quot;)))</code></pre></noscript></div>
+</p>
+
+<p>Como eu falei, nada mais que uma lista com chamadas para <code>if</code> e <code>do</code>. Isso acontece porque precisamos que uma lista seja retornada. Para que o Clojure possa dar <code>evaluate</code> nela, como se fora uma chamada para uma função qualquer, por exemplo: <code>(+ 1 2) ; =&gt; 2</code>.</p>
+
+<p>Dentro de uma <em>macro</em> podemos usar qualquer outro código Clojure, chamar funções, por exemplo. Mas por que o <code>if</code> e o <code>do</code> não são <em>evaluated</em>? Porque usamos <em>Simple Quoting</em> para informar a linguagem que aquele pedaço de código não deve ser <em>evaluated</em>.</p>
+
+<p>Vamos criar uma <em>macro</em> chamada <code>unless</code> (ok, já sei, existe o <code>if-not</code>) que recebe uma condicional e executa o bloco passado, que pode ser mais de uma lista, caso a condição seja <code>false</code>:</p>
+
+<p><div><script src='https://gist.github.com/18b0b15d832815c982f3.js'></script>
+<noscript><pre><code>(defmacro unless
+  [test &amp; branches]
+  (list &#39;if (list &#39;not test) (cons &#39;do branches)))
+ 
+(macroexpand &#39;(unless (&gt; 2 1) (println &quot;If invertido&quot;)))
+; =&gt; (if (not (&gt; 2 1)) (do (println &quot;If invertido&quot;)))</code></pre></noscript></div>
+</p>
+
+<p>Tivemos que fazer o <em>quote</em> do <code>if</code> para dizer que ele é um símbolo <code>unevaluated</code> na lista retornada. Porém, o código não ficou tão logível quanto deveria ficar, dependendo do tamanha da <em>macro</em> o código pode se tornar muito verboso e quase inelegível.</p>
+
+<p>Para estes casos, podemos utilizar <em>Syntax Quoting</em>, um tipo de <em>quote</em> mais poderoso:</p>
+
+<p><div><script src='https://gist.github.com/64b1e2f16a264a8bf03b.js'></script>
+<noscript><pre><code>(defmacro unless
+  [test &amp; branches]
+  `(if (not test) (do branches)))
+ 
+(macroexpand &#39;(unless (&gt; 2 1) (println &quot;If invertido&quot;)))
+; =&gt; (if (clojure.core/not clojure.core/test) (do user/branches))</code></pre></noscript></div>
+</p>
+
+<p><em>Syntax Quoting</em> permite que uma lista <em>unevaluated</em> seja retornada, dando o mesmo efeito do <em>Simple Quoting</em>, mas com um código bem mais sucinto.</p>
+
+<p>Uma das diferenças é que os símbolos são retornados com seu nome completo, por exemplo:</p>
+
+<p><div><script src='https://gist.github.com/fd2f428264e5f9b76c35.js'></script>
+<noscript><pre><code>&#39;+ ; =&gt; +
+`+ ; =&gt; clojure.core/+</code></pre></noscript></div>
+</p>
+
+<p>Olhando o retorno da macro <code>unless</code> percebemos algo errado. Os parâmetros <code>test</code> e <code>branches</code> foram <em>quoted</em> também, quando na verdade deveriam ser <code>(&gt; 2 1)</code> e <code>(println "If invertido")</code>. Se tentarmos invocar a <em>macro</em> acima, uma exceção informando que os símbolos não existem.</p>
+
+<p>Podemos informar ao Clojure que faça <em>unquote</em> utilizando <em>til</em> (~):</p>
+
+<p><div><script src='https://gist.github.com/afddd9cca1f57dc6b41f.js'></script>
+<noscript><pre><code>(defmacro unless
+  [test &amp; branches]
+  `(if (not ~test) (do ~branches)))
+ 
+(macroexpand &#39;(unless (&gt; 2 1) (println &quot;If invertido&quot;)))
+; =&gt; (if (clojure.core/not (&gt; 2 1)) (do ((println &quot;If invertido&quot;))))</code></pre></noscript></div>
+</p>
+
+<p>Quando um <em>til</em> aparece dentro de um código <em>syntax quoted</em>, o Clojure faz um <em>evaluate</em> destes <em>forms</em>. No próximo post falaremos sobre <a href="http://lucasas.github.io/blog/2015/01/09/aumente-o-poder-das-suas-macros-usando-unquote-splicing"><em>Unquote Splicing</em></a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

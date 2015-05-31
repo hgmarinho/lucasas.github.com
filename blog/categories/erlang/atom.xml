@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Artigos Da Categoria: Erlang | Programação, etc]]></title>
+  <link href="http://lucasas.github.io/blog/categories/erlang/atom.xml" rel="self"/>
+  <link href="http://lucasas.github.io/"/>
+  <updated>2015-05-31T12:25:39-03:00</updated>
+  <id>http://lucasas.github.io/</id>
+  <author>
+    <name><![CDATA[Lucas Souza]]></name>
+    <email><![CDATA[lucasas@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Pattern Matching, Clojure E Elixir]]></title>
+    <link href="http://lucasas.github.io/blog/2014/12/10/pattern-matching-clojure-erlang/"/>
+    <updated>2014-12-10T23:38:41-02:00</updated>
+    <id>http://lucasas.github.io/blog/2014/12/10/pattern-matching-clojure-erlang</id>
+    <content type="html"><![CDATA[<p>No último sábado, tivemos uma aprensentação do <a href="https://twitter.com/arthurgeek">@arthurgeek</a> e do <a href="https://twitter.com/almeidaricardo">@ricardo</a> sobre Elixir aqui no <a href="http://www.getninjas.com.br">GetNinjas</a>. Dentre as várias coisas interessantes da linguagem, eles mostraram <em>pattern matching</em> em funções. <!--more--></p>
+
+<p>Clojure, assim como a maioria das linguagens funcionais, implementa <em>pattern matching</em>. Mas primeiro vamos ver um código que não utiliza <em>pattern matching</em>, o conhecido e famigerado <em>FizzBuzz</em>:</p>
+
+<p><div><script src='https://gist.github.com/1c5aacfbef839ef6fae7.js'></script>
+<noscript><pre><code>(def numeros (range 1 101))
+ 
+(doseq [n numeros]
+  (println
+    (let [ mod_3 (mod n 3) mod_5 (mod n 5) ]
+      (cond 
+        (and (= mod_3 0) (= mod_5 0)) &quot;FizzBuzz&quot;
+        (and (= mod_3 0) (&gt; mod_5 0)) &quot;Fizz&quot;
+        (and (&gt; mod_3 0) (= mod_5 0)) &quot;Buzz&quot;
+        :else n))))</code></pre></noscript></div>
+</p>
+
+<p>Primeiro criamos uma coleção chamada <code>numeros</code> com um range de 1 a 100. A função <code>doseq</code> itera a coleção de números, o restante do código é a implementação básica do <em>FizzBuzz</em>:</p>
+
+<ol>
+<li>Calculamos o resto da divisão com 3 e 5, bindamos o resultado nos símbolos <code>mod_3</code> e <code>mod_5</code>, respectivamente.</li>
+<li>A função <code>cond</code> é similar ao <code>switch</code> de outras linguagens, aceitando múltiplas condições. O suficiente para implementarmos as quatro condições do <em>FizzBuzz</em>.</li>
+</ol>
+
+
+<p>Vamos substituir as múltiplas condições da função <code>cond</code>, por um <em>pattern matching</em>, cuja uma das <em>features</em> é fazer asserção no conteúdo de uma variável:</p>
+
+<p><div><script src='https://gist.github.com/ba623bf9ece9ae83388f.js'></script>
+<noscript><pre><code>(use &#39;[clojure.core.match :only (match)])
+
+(def numeros (range 1 101))
+
+(doseq [n numeros]
+  (println
+    (match [(mod n 3) (mod n 5)]
+      [0 0] &quot;FizzBuzz&quot;
+      [0 _] &quot;Fizz&quot;
+      [_ 0] &quot;Buzz&quot;
+      :else n)))
+</code></pre></noscript></div>
+</p>
+
+<p>Na primeira linha o objetivo é usar a função <code>use</code> para tornar disponível a função <code>match</code> pertencente ao módulo <code>clojure.core.match</code>, algo como importar a função para dentro do escopo onde iteramos a coleção.</p>
+
+<p>A função <code>match</code> define dentro dos <code>[]</code> os valores que podemos fazer asserção. A primeira asserção feita verifica se os dois valores são <code>0</code>, caso positivo <code>FizzBuzz</code> é retornado para a função <code>println</code>, caso contrário, a próxima asserção é feita, neste caso, se o primeiro valor <code>(mod n 3)</code> for <code>0</code>, o valor <code>Fizz</code> é retornado. Se essa asserção falhar, a terceira é feita verificando que <code>(mod n 5)</code> é <code>0</code>, retornando <code>Buzz</code>. Caso nenhuma asserção for verdadeira, a opção <code>else</code> é executada e o valor <code>n</code> é retornado.</p>
+
+<p>Na segunda asserção utilizamos <code>_</code> para que o Clojure ignore o segundo valor, ou seja, não importa o que <code>(mod n 5)</code> retorne, se o primeiro valor <code>(mod n 3)</code> for <code>0</code>, &ldquo;Fizz&rdquo; será retornado. O mesmo vale para a terceira asserção, obviamente, muda-se apenas o valor ao qual fazemos a verificação.</p>
+
+<p><em>Pattern Matching</em> possui várias características legais que vou comentar ao longo dos outros posts. Mas uma <em>feature</em> do Elixir em particular que eu gostei muito, não existe (eu pelo menos não achei :P) no Clojure, que a capacidade fazer <em>match</em> na declaração de funções. Por exemplo o seguinte código em Elixir:</p>
+
+<p><div><script src='https://gist.github.com/59a7db92fef8c6051d44.js'></script>
+<noscript><pre><code>defmodule Factorial do
+  def of(0), do: 1
+  def of(1), do: 1
+  def of(n) do
+    n * of(n-1)
+  end
+end
+
+Factorial.of(4) # 24
+</code></pre></noscript></div>
+</p>
+
+<p>O <em>pattern matching</em> do Elixir consegue executar determinada função baseado no valor passado como argumento, ou seja, caso <code>Factorial.of(2)</code> seja invocada, o compilador sabe que a função <code>n * of(n - 1)</code> deve ser executada, quando <code>Factorial.of(0)</code> for chamado, o compilador executa a função que retorna <code>1</code> e quando <code>Factorial.of(1)</code> for chamado, a outra função que retorna <code>1</code> será executada. A legibilidade do código aumenta, conseguimos ler: <em>fatorial de 0 = 1</em> e <em>fatorial de n = n * fatorial(n - 1)</em>.</p>
+
+<p>Como sabemos chamadas recursivas precisam de uma condição de parada. Normalmente no cálculo de fatorial a condição é <code>(= n 0) ; =&gt; true</code>, porém, aprendemos com o exemplo anterior que é possível remover <code>if</code> usando <em>pattern matching</em>. Uma versão do cálculo fatorial usando <code>match</code> ficaria assim:</p>
+
+<p><div><script src='https://gist.github.com/9f1007e93186c8011840.js'></script>
+<noscript><pre><code>(use &#39;[clojure.core.match :only (match)])
+
+(defn fatorial [n]
+  (match [n]
+    [0] 1
+    [1] 1
+    [n] (* n (fatorial (dec n)))))
+
+(fatorial 5) ; =&gt; 120
+</code></pre></noscript></div>
+</p>
+
+<p>Mesmo assim, o código, na minha opinião, não fica tão legível quanto fica no exemplo escrito em Elixir.</p>
+
+<p>A boa notícia é que conseguimos alcançar o mesmo comportamento em Clojure usando <em>macros</em>.</p>
+
+<p>Como todos os dialetos Lisp, Clojure é uma linguagem <a href="https://en.wikipedia.org/wiki/Homoiconic"><em>homoiconic</em></a> que nos dá o poder de criar rotinas em Clojure que escrevem código Clojure.</p>
+
+<p><em>Macros</em> são como funções, elas possuem nome, um documentação opcional, uma lista de argumentos e um corpo. O corpo, quase sempre retornará uma lista, o que faz bastante sentido, já que Clojure usa listas para representar chamada de funções, chamada de macros, e chamada para <em>forms</em> especiais. Tenha cuidado antes de criar uma <em>macro</em> porque é considerada uma má prática criá-las quando podemos resolver os problemas utilizando funções comuns.</p>
+
+<p>Vamos criar uma <em>macro</em> simples:</p>
+
+<p><div><script src='https://gist.github.com/ce316bddf5ce2324d968.js'></script>
+<noscript><pre><code>(defmacro chamada-funcao-hipster
+  &quot;Jeito hipster de chamar uma função ;-)&quot;
+  [expression]
+    (cons (second expression) (vector (first expression) (last expression))))
+ 
+(chamada-funcao-hipster (1 + 1))</code></pre></noscript></div>
+</p>
+
+<p>Repare que dentro de uma <em>macro</em> podemos usar qualquer outro código Clojure. Você usa o poder da linguagem para fazer a própria linguagem. A diferença principal entre funções e macros é que argumentos de funções são <em>evaluated</em> antes de serem passadas para a função, <em>macros</em> recebem argumentos como estruturas de dados não <em>evaluated</em>. Você pode comprovar isso tentando rodar <code>(1 + 1)</code>, observando que uma exception ocorre.</p>
+
+<p>Porém, quando passamos o mesmo código como argumento para a <em>macro</em> <code>chamada-funcao-hipster</code>, a lista não <em>evaluated</em> <code>(1 + 1)</code> é passada. Dentro do corpo da <em>macro</em>, manipulamos a lista para se tornar algo que o Clojure consiga <em>evaluate</em>: <code>(+ 1 1)</code>.</p>
+
+<p>No exemplo do fatorial, onde queremos usar <em>pattern matching</em> na definição das funções, podemos utilizar a macro <a href="https://github.com/killme2008/defun">defun</a>, que por baixo dos panos cria uma função que utiliza o mesmo <code>match</code> que aprendemos a utilizar. Como havia dito, o código fica um pouco mais legível:</p>
+
+<p><div><script src='https://gist.github.com/1127210fb9b53325821e.js'></script>
+<noscript><pre><code>(use &#39;[defun :only [defun]])
+
+(defun fatorial
+  ([0] 1)
+  ([1] 1)
+  ([n] (* n (fatorial (dec n)))))
+</code></pre></noscript></div>
+</p>
+
+<p><em>Macros</em> permitem que o compilador seja extendido por códigos escritos pelo usuário. Isso nos permite criar códigos que são mais concisos, legíveis e significativos. <a href="http://clojure.org/macros">Leia mais</a> sobre esse poderoso recurso da linguagem.</p>
+]]></content>
+  </entry>
+  
+</feed>
