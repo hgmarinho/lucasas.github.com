@@ -32,7 +32,7 @@ Podemos usar *destructuring* com mapas, o que muda é que agora será necessári
 
 {% gist 3c70b36973e8d84c0d28 %}
 
-Nada impede que você criei os *locals* usando o mesmo nome das `keys`:
+Nada impede que você criei os *locals* usando o mesmo nome das *keys*:
 
 {% gist b24435fe1de47dd6ff82 %}
 
